@@ -1,0 +1,5 @@
+a2a
+a2a-sdk
+openai
+python-dotenv
+uvicorn

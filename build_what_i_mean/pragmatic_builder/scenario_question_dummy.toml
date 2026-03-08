@@ -1,0 +1,12 @@
+[green_agent]
+endpoint = "http://127.0.0.1:9009"
+cmd = "python evaluator_proxy.py --host 127.0.0.1 --port 9009"
+
+[[participants]]
+role = "rita"
+endpoint = "http://127.0.0.1:9020"
+cmd = "python question_dummy_agent.py --host 127.0.0.1 --port 9020"
+
+[config]
+"list1_path" = "data/List1_FINAL_stimuli_list.csv"
+"list2_path" = "data/List2_FINAL_stimuli_list.csv"

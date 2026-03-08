@@ -1,0 +1,8 @@
+.idea/*
+*/logs/
+.env
+.DS_Store
+.python-version
+.venv/
+__pycache__/
+*.pyc

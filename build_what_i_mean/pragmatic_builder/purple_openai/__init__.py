@@ -1,0 +1,1 @@
+"""OpenAI-based purple agent."""

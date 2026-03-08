@@ -1,0 +1,26 @@
+[project]
+name = "purple-openai-agent"
+version = "2.0.0"
+description = "LLM-powered purple agent (rita) for the Build-What-I-Mean benchmark — two-stage pragmatic pipeline."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "a2a-sdk[http-server]>=0.3.20",
+    "openai>=1.0.0",
+    "python-dotenv>=1.2.1",
+    "uvicorn>=0.38.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[project.scripts]
+# Run with:  uv run purple-agent --host 0.0.0.0 --port 9022
+purple-agent = "server:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
