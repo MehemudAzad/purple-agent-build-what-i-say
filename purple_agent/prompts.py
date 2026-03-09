@@ -120,17 +120,19 @@ Ground block:   y = 50
 
 OUTPUT FORMAT (strict)
 ---------------------
-Reply with EXACTLY one line:
-
-    [BUILD];Color,x,y,z;Color,x,y,z;...
+First, you MUST write a <thinking> block where you step-by-step calculate the coordinates.
+1. Identify the coordinates of the START_STRUCTURE.
+2. Determine the shape and geometric spatial relationships (e.g. "This is an L shape. The arm from X=0 to X=200 is 3 blocks. The longer arm is along the X axis.")
+3. Calculate the exact (X, Y, Z) mathematical coordinate for each new block based on the instructions.
+4. Finally, output the [BUILD] string on a single new line at the very end of your response.
 
 RULES:
 1. Include ALL blocks from START_STRUCTURE unless the instruction explicitly removes them.
 2. Add all new blocks described in the instruction.
 3. Every coordinate MUST be a valid grid value (see above).
 4. Colours MUST be capitalised: Red, Blue, Green, Yellow, Purple, Orange …
-5. No spaces anywhere in the block list.  Semicolons separate blocks.
-6. Do NOT output any text before or after the [BUILD] line.
+5. CRITICAL: The format MUST be exactly `Color,x,y,z;Color,x,y,z`. You MUST use commas inside coordinates and semicolons between blocks. NEVER use parentheses `()`. NEVER use spaces. NEVER use line breaks within the string.
+6. The final line of your response MUST begin with [BUILD] followed immediately by the block list (e.g. `[BUILD];Red,0,50,0;Red,0,150,0`)
 7. If RESOLVED AMBIGUITY is provided, it contains the definitive answer to a missing detail (color or count). You MUST incorporate this answer exactly into your block construction instead of guessing.
 """
 
@@ -175,9 +177,16 @@ Valid X, Z: -400, -300, -200, -100, 0, 100, 200, 300, 400
 Valid Y:    50, 150, 250, 350, 450   (ground = 50, each stacked block adds 100)
 Format:     Color,x,y,z  — colour capitalised, no spaces
 
-Respond with EXACTLY one of:
-  [BUILD];Color,x,y,z;Color,x,y,z;...
-  [ASK];your question
+Respond with EXACTLY one of the following formats:
+
+Format A (if building):
+<thinking>
+...
+</thinking>
+[BUILD];Color,x,y,z;Color,x,y,z;...
+
+Format B (if you MUST ask a question instead):
+[ASK];your question
 
 Include ALL blocks that should be on the grid (existing + new).
 Do NOT output any other text.

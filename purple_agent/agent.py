@@ -464,9 +464,42 @@ class PurplePipeline:
         logger.info("[STAGE2_LLM] User prompt (first 200 chars):\n%s", user_msg[:200])
         if resolution:
             logger.info("[STAGE2_LLM] Resolution provided: %s", resolution)
-        raw = await self._llm_call(messages)
+        
+        # We need slightly higher tokens because we're doing Chain of Thought now.
+        raw = await self._llm_call(messages, max_tokens=2048)
         logger.info("[STAGE2_LLM] Raw response from LLM:\n%s", raw)
-        return raw
+
+        # Extract the actual [BUILD] string from the CoT response
+        build_line = ""
+        for line in raw.split("\n"):
+            line = line.strip()
+            if line.startswith("[BUILD]"):
+                build_line = line
+                break
+        
+        if not build_line:
+            logger.warning("[STAGE2_LLM] LLM failed to output a [BUILD] line, falling back to raw")
+            build_line = raw
+
+        # Auto-correct common LLM formatting mistakes like `Green(0,50,0)` instead of `Green,0,50,0;`
+        if build_line.startswith("[BUILD]"):
+            content = build_line[len("[BUILD]"):].strip()
+            # If it forgot the semicolon after [BUILD]
+            if content.startswith(";"):
+                content = content[1:]
+            
+            # Replace parentheses if the LLM used them
+            content = content.replace("(", ",").replace(")", ";")
+            # Cleanup multiple semicolons caused by `);`
+            content = content.replace(";;", ";")
+            # Remove spaces
+            content = content.replace(" ", "")
+            # Remove trailing semicolons
+            content = content.strip(";")
+            
+            build_line = f"[BUILD];{content}"
+
+        return build_line
 
     async def _llm_call(
         self,
