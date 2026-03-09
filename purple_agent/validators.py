@@ -21,8 +21,8 @@ VALID_COLORS: frozenset[str] = frozenset({
     "White", "Black", "Brown", "Pink", "Gray", "Grey",
 })
 
-# Regex for a single block token: Color,int,int,int
-_BLOCK_RE = re.compile(r"^([A-Za-z]+),\s*(-?\d+),\s*(\d+),\s*(-?\d+)$")
+# Regex for a block token, tolerant to formatting (e.g. floats, quotes, brackets, missing spaces)
+_BLOCK_RE = re.compile(r"([A-Za-z]+)[,\s\"'\[\]]*(-?\d+(?:\.\d+)?)[,\s\"'\[\]]+(-?\d+(?:\.\d+)?)[,\s\"'\[\]]+(-?\d+(?:\.\d+)?)")
 
 
 # ---------------------------------------------------------------------------
@@ -53,14 +53,17 @@ def validate_block(block_str: str) -> str | None:
     if not block_str:
         return None
 
-    m = _BLOCK_RE.match(block_str)
+    m = _BLOCK_RE.search(block_str)
     if not m:
         return None
 
-    color = normalize_color(m.group(1))
-    x = snap(int(m.group(2)), VALID_XZ)
-    y = snap(int(m.group(3)), VALID_Y)
-    z = snap(int(m.group(4)), VALID_XZ)
+    color_raw = m.group(1).replace("'", "").replace('"', '')
+    color = normalize_color(color_raw)
+    
+    # Use int(float()) to safely handle '50.0' or '50'
+    x = snap(int(float(m.group(2))), VALID_XZ)
+    y = snap(int(float(m.group(3))), VALID_Y)
+    z = snap(int(float(m.group(4))), VALID_XZ)
 
     return f"{color},{x},{y},{z}"
 
@@ -95,22 +98,21 @@ def validate_build_response(response: str) -> str:
                 cleaned.append(line)
         response = "\n".join(cleaned).strip()
 
-    # If multiple lines, find the one that starts with [BUILD]
-    for line in response.splitlines():
-        line = line.strip()
-        if line.startswith("[BUILD]"):
-            response = line
-            break
-
-    if not response.startswith("[BUILD]"):
+    # If the response contains [BUILD], slice from there
+    build_idx = response.find("[BUILD]")
+    if build_idx != -1:
+        response = response[build_idx:]
+    elif ";" in response and "," in response:
         # Try to salvage: if it looks like block coordinates, wrap it.
-        if ";" in response and "," in response:
-            response = "[BUILD];" + response.lstrip(";")
-        else:
-            return response  # Can't fix, return as-is
+        response = "[BUILD];" + response.lstrip(";")
+    else:
+        return response  # Can't fix, return as-is
 
     # Parse blocks after the prefix
     content = response[7:]  # after "[BUILD]"
+    # Replace newlines with semicolons to support multiline blocks gracefully
+    content = content.replace('\n', ';')
+    
     if content.startswith(";"):
         content = content[1:]
 

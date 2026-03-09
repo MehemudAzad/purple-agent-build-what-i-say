@@ -1,0 +1,465 @@
+================================================================================
+PURPLE AGENT: FULL SYSTEM CONTEXT
+================================================================================
+Last Updated: March 9, 2026
+Current Status: 43% accuracy (3/7 correct) on spatial reasoning tasks
+Overall Score: -10 points after 7 rounds
+
+================================================================================
+1. SPATIAL REASONING TASK OVERVIEW
+================================================================================
+
+TASK: Build 3D grid structures from natural language instructions.
+
+GRID SYSTEM:
+  - 9x9 spatial cells on the x-z plane
+  - Origin (0, 0) is the CENTER, marked as "highlighted square"
+  - X-axis: -400 (left) to +400 (right), increments of 100
+  - Z-axis: -400 (top/behind) to +400 (bottom/front), increments of 100
+  - Y-axis (height): 50 (ground), 150, 250, 350, 450 (top), increments of 100
+  - Valid coordinates: x,z ∈ {-400,-300,-200,-100,0,100,200,300,400}, y ∈ {50,150,250,350,450}
+
+GRID CORNERS:
+  - Bottom-left: (-400, 0, 400)  ← "in front of you, to the left"
+  - Bottom-right: (400, 0, 400)  ← "in front of you, to the right"
+  - Top-right: (400, 0, -400)    ← "behind you, to the right"
+  - Top-left: (-400, 0, -400)    ← "behind you, to the left"
+
+COORDINATE OUTPUT FORMAT:
+  [BUILD];Color,x,y,z;Color,x,y,z;...
+  Example: [BUILD];Purple,0,50,0;Green,0,150,0;Green,0,250,0
+  Rules:
+    - Colors must be capitalized (Purple, Green, Red, Blue, etc.)
+    - No spaces in the output
+    - Include ALL blocks on the grid (original + new)
+    - Coordinates are exact integers
+
+SCORING:
+  - Correct structure: +10 points
+  - Incorrect structure: -10 points
+  - Asking a clarification question: -5 points (only 1 question allowed per round)
+
+================================================================================
+2. DIRECTION MAPPINGS (CRITICAL FOR ACCURACY)
+================================================================================
+
+HORIZONTAL DIRECTIONS:
+  - "left" / "to the left" → decrease X by 100 (X -= 100)
+  - "right" / "to the right" → increase X by 100 (X += 100)
+  - "in front" / "front of" → increase Z by 100 (Z += 100)
+  - "behind" / "back of" → decrease Z by 100 (Z -= 100)
+
+VERTICAL DIRECTIONS:
+  - "on top" / "stack" / "above" → increase Y by 100 (Y += 100)
+  - "below" / "under" → decrease Y by 100 (Y -= 100)
+
+RELATIVE POSITIONING:
+  - "Extend the line" → Continue in the same direction the line is going
+  - "Place one block to the right of X" → Find X's position, add (+100, 0, 0)
+  - "Starting from square Y, place blocks going towards..." → Determine direction from context
+
+================================================================================
+3. CURRENT PIPELINE ARCHITECTURE
+================================================================================
+
+STAGE 1: CLASSIFICATION & INTENT EXTRACTION
+  Input: Natural language instruction + existing grid state
+  LLM: Qwen3.5-27B (via vLLM on Kaggle H100)
+  Task:
+    1. Identify if instruction is ambiguous (missing color or count)
+    2. Extract explicitly mentioned colors
+    3. Extract explicitly mentioned counts
+    4. Determine confidence in ability to build
+  Output: JSON object
+    {
+      "ambiguity": "none" | "color" | "count",
+      "confidence_in_build": 0.0-1.0,
+      "explicitly_mentioned_colors": ["Purple", "Green"],
+      "explicitly_mentioned_counts": {"blocks": 4, "stacks": 2},
+      "missing_description": "Which color for the unspeified blocks?"
+    }
+  Decision Gate:
+    IF ambiguity_type != "none" AND confidence < 0.6:
+      → Return [ASK_QUESTION] and -5 points cost
+    ELSE:
+      → Proceed to Stage 2
+
+STAGE 2: SPATIAL COORDINATE GENERATION
+  Input: Full instruction + resolution (if [ASK] was taken) + START_STRUCTURE
+  LLM: Qwen3.5-27B (same model)
+  Task:
+    1. Parse the instruction grammatically
+    2. Identify all spatial operations:
+       - "Extend line" → compute continuation direction
+       - "Place X blocks" → determine placement positions from relative directions
+       - "Stack N blocks on top" → place at current_y + (100 * N)
+       - "Add to each arm" → identify arms from START_STRUCTURE, place blocks
+    3. Calculate exact (x, y, z) coordinates
+    4. Include original START_STRUCTURE blocks + new blocks
+    5. Format output as [BUILD];...
+  Output: Coordinate string
+    Example: [BUILD];Red,100,50,-100;Red,100,50,0;Red,100,50,100;Red,200,50,100;Red,200,50,200
+
+FEEDBACK LOOP & SPEAKER PROFILING
+  Input: Agent output vs. ground truth
+  Process:
+    1. Compare coordinate-by-coordinate
+    2. If CORRECT (+10 points):
+       - Track this speaker's successful builds
+       - Learn their color/count preferences
+    3. If INCORRECT (-10 points):
+       - Log error pattern (direction confusion, height error, wrong arm, etc.)
+       - Analyze what went wrong
+       - Update speaker profile with this attempt
+  Speaker Profile Tracking:
+    - color_fills: list of colors used when unspecified → infer default color
+    - count_fills: list of counts used when unspecified → infer default count
+    - turns_seen: number of instructions from this speaker
+    - correct_builds: number of times this speaker's instruction was built correctly
+    - incorrect_builds: number of times this speaker's instruction failed
+
+================================================================================
+4. PERFORMANCE ANALYSIS (From 7 Rounds of Testing)
+================================================================================
+
+ROUND 1: Laura - "Extend T-shape, add 2 to base, add 1 purple to arms"
+  Expected: Extend vertical (+ 2 blocks in Z direction), add purple at same height
+  Got: Added purple at height 150 instead of 50; wrong direction
+  Score: -10 (INCORRECT)
+  Error: Height confusion ("add to arms" ≠ "stack on top")
+           Directional error (Z-axis misunderstood)
+
+ROUND 2: Laura - "Purple at center, stack 3 green on top"
+  Expected: Purple at (0,50,0), Green at (0,150,0), (0,250,0), (0,350,0)
+  Got: [EXACT MATCH]
+  Score: +10 (CORRECT)
+  Pattern: Simple stacking works well
+
+ROUND 3: Laura - "Extend red line, place 2 in line toward bottom"
+  Expected: Extend in X direction (+X), then continue in Z direction (+Z)
+  Got: Placed at wrong Z coordinate (100 instead of 200)
+  Score: -10 (INCORRECT)
+  Error: "Towards bottom of grid" direction misunderstood (Z-axis confusion)
+
+ROUND 4: Laura - "Put red block in each corner, stack 2 on top"
+  Expected: 4 red blocks at ground + 8 red blocks stacked 2 high = 12 total
+  Got: [EXACT MATCH]
+  Score: +10 (CORRECT)
+  Pattern: 4-corner placement + stacking works
+
+ROUND 5: Laura - "Purple at center, one to right, red in front of each"
+  Expected: Purple at (0,50,0) and (100,50,0); Red at (0,50,100) and (100,50,100)
+  Got: Purple at (-100,50,-100) and (0,50,-100); Red at (-100,50,0) and (0,50,0)
+  Score: -10 (INCORRECT)
+  Error: Direction confusion (front/right interpretation reversed)
+
+ROUND 6: Laura - "Red row, extend right by 2, stack 1 on each end"
+  Expected: Horizontal row extended +X twice; stacks on leftmost and rightmost
+  Got: [EXACT MATCH]
+  Score: +10 (CORRECT)
+  Pattern: Horizontal extension + end stacking works
+
+ROUND 7: Laura - "Stack 3 blue to left, then 3 green to left of blue"
+  Expected: Blue stack at (-100,50,0), (-100,150,0), (-100,250,0)
+            Green stack at (-200,50,0), (-200,150,0), (-200,250,0)
+  Got: [IN PROGRESS/NOT SHOWN]
+  Score: TBD
+
+AGGREGATE STATISTICS:
+  - Accuracy: 43% (3 correct out of 7)
+  - Total Score: -10 points
+  - Pattern 1: Simple vertical stacking → 100% accuracy (2/2)
+  - Pattern 2: Corner placement → 100% accuracy (1/1)
+  - Pattern 3: Relative horizontal placement → 0% accuracy (0/3)
+  - Pattern 4: Multi-direction spatial reasoning → 0% accuracy (0/2)
+
+================================================================================
+5. ERROR PATTERNS & ROOT CAUSES
+================================================================================
+
+ERROR TYPE 1: Direction Confusion (Front/Behind vs Left/Right)
+  Symptom: Z-axis coordinates incorrect when "front"/"behind" mentioned
+  Example: Round 5 - placed Purple at Z=-100 instead of Z=0
+  Root Cause: Model conflates "front of grid" with "bottom left corner"
+               Model reverses direction when combining multiple axes
+  Frequency: 3/7 errors include direction confusion
+
+ERROR TYPE 2: Height Misunderstanding
+  Symptom: Y-coordinate wrong (150 instead of 50, or vice versa)
+  Example: Round 1 - added purple blocks at Y=150 instead of Y=50
+  Root Cause: Model conflates "add to structure" with "on top of structure"
+               "On top of" can mean:
+               - Stack directly above (Y + 100)
+               - Add to existing structure (same Y)
+  Frequency: 2/7 errors include height confusion
+
+ERROR TYPE 3: Relative Position Parsing
+  Symptom: When instruction says "2 blocks from existing", model places wrong count/direction
+  Example: Round 3 - "extend by adding 2 blocks" got partially correct but wrong Z
+  Root Cause: Multi-step spatial reasoning (find existing, determine direction, extend) fails
+  Frequency: 2/7 errors
+
+HIGH-ACCURACY PATTERNS:
+  ✓ Single block at origin: 100%
+  ✓ Vertical stacking (all Y changes): 100%
+  ✓ Corner placements (exact coordinates): 100%
+  ✓ Simple horizontal extension (same axis): 100%
+
+LOW-ACCURACY PATTERNS:
+  ✗ Multi-directional movement (combining X and Z changes): 0%
+  ✗ Relative positioning from existing structure: 0%
+  ✗ "Add to arms" or "each arm" parsing: 0%
+
+================================================================================
+6. SPEAKER PROFILE TRACKING
+================================================================================
+
+SPEAKER: Laura
+  Turns Seen: 7
+  Correct Builds: 3
+  Incorrect Builds: 4
+  Success Rate: 43%
+
+Observed Preferences:
+  - Preferred Colors: Purple, Green, Red, Blue (all used when unspecified)
+  - Preferred Counts: 1, 2, 3 (all used)
+  - Instructions tend to be: moderate complexity, mix of stacking + extension
+
+Profile Summary Text (generated by agent):
+  "Speaker 'Laura' (7 turns, 3 correct, 4 incorrect):
+   When color was unspecified, they used: [Purple, Red, Blue, Green] → likely 'Purple'
+   When count was unspecified, they used: [3, 2, 2, 1] → likely 2"
+
+================================================================================
+7. TECHNOLOGY STACK
+================================================================================
+
+DEPLOYMENT:
+  - Platform: Kaggle H100 GPU Notebook
+  - GPU: 1x NVIDIA H100 (80GB VRAM)
+  - vLLM Version: 0.6.3 (custom wheels, V1 engine disabled)
+
+LLM INFERENCE SERVER:
+  - Service: vLLM OpenAI-compatible API server
+  - Model: Qwen3.5-27B (text-only, --language-model-only flag)
+  - Host: Kaggle localhost:8000
+  - Public Endpoint: Ngrok tunnel (https://[ngrok-url]/v1)
+  - Flags:
+    --model /kaggle/input/models/qwen-lm/qwen-3-5/transformers/qwen3.5-27b/1
+    --served-model-name qwen3.5-27b
+    --gpu-memory-utilization 0.96
+    --kv-cache-dtype fp8_e4m3
+    --max-model-len 65536
+    --tensor-parallel-size 1
+    --language-model-only
+    --enable-prefix-caching
+    --async-scheduling
+    --disable-log-stats
+
+AGENT CODE:
+  - Language: Python 3.10+
+  - Client: AsyncOpenAI (async HTTP requests to vLLM)
+  - Architecture:
+    - PurplePipeline: Main orchestrator class
+    - StateManager: Tracks sessions across contexts
+    - SessionState: Per-context mutable state (speakers, conversation, pending)
+    - SpeakerProfile: Per-speaker learned conventions
+    - Prompts: System prompts + user prompt templates
+    - Validators: Output format validation and coordinate checking
+
+DIRECTORY STRUCTURE:
+  /purple-agent/
+    ├── purple_openai/
+    │   ├── agent.py (PurplePipeline class)
+    │   ├── state.py (StateManager, SessionState, SpeakerProfile)
+    │   ├── prompts.py (System/user prompts for Stage 1 & 2)
+    │   ├── validators.py (Coordinate validation, format checking)
+    │   └── models.py (Data models)
+    ├── qwen-model-inference/
+    │   └── qwen-3-5-27b-ngrok-notebook.ipynb (Kaggle deployment)
+    └── logs/
+        └── transcripts/ (Conversation logs)
+
+================================================================================
+8. CURRENT LIMITATIONS & CHALLENGES
+================================================================================
+
+1. SPATIAL REASONING ACCURACY: 43%
+   Challenge: LLM struggles with multi-axis coordinate transformations
+   Manifest: Confuses Z-axis directions, reverses left/right when adding third dimension
+   Solution Ideas:
+     - Fine-tune on spatial reasoning data (requires 500+ examples)
+     - Add explicit coordinate diagrams to system prompt
+     - Route to a specialized spatial reasoning model (if available)
+
+2. RELATIVE POSITIONING: 0% on complex multi-step
+   Challenge: "2 blocks from existing structure in direction X" requires:
+     - Parse existing structure
+     - Determine structure direction
+     - Extend in consistent direction
+   Manifest: Model adds blocks but wrong count or wrong direction
+   Solution: Add explicit "find structure direction" step in Stage 2 prompt
+
+3. AMBIGUITY RESOLUTION: Mixed results
+   Challenge: Speaker preferences are learned slowly
+   Manifest: Need multiple feedback rounds to infer color/count conventions
+   Solution: Could pre-initialize profiles with stronger priors
+
+4. ARM/BRANCH PARSING: Failing
+   Challenge: "Add one block to each arm" requires:
+     - Identify arms from START_STRUCTURE
+     - Count arms
+     - Place blocks at correct positions per arm
+   Manifest: Model places blocks randomly or misses some arms
+   Solution: Add "analyze structure branches" subroutine to Stage 2
+
+5. Y-COORDINATE HEIGHT CONFUSION: Common error
+   Challenge: "Add to structure" vs "stack on top" vs "place at same level"
+   Manifest: Wrong Y values when instruction is ambiguous
+   Solution: More specific prompt wording about height preservation
+
+================================================================================
+9. NEXT STEPS FOR IMPROVEMENT
+================================================================================
+
+SHORT-TERM (Prompt Engineering):
+  1. Add explicit coordinate system diagram to system prompt
+     - Show X, Y, Z axes with examples
+     - Clarify front/behind orientation
+  2. Add "Spatial Reasoning Checklist" before Stage 2 generation:
+     - Parse existing structure
+     - Determine structure direction/orientation
+     - Identify all "arms" or branches
+     - Calculate positions for each new block
+  3. Create instruction parsing examples:
+     - "Extend by 2 to the right" = 2 steps in +X direction
+     - "Add one to each arm" = find arms, place 1 each
+
+MEDIUM-TERM (Model Routing):
+  1. Use cheaper model for Stage 1 (gpt-4o-mini) to save cost
+  2. Use stronger model for Stage 2 (GPT-4o, Claude-3.5-Sonnet, or local DeepSeek)
+  3. Implement cascade: if small model uncertain, use big model
+
+LONG-TERM (Fine-tuning):
+  1. Collect 500+ examples of (instruction, expected coordinates)
+  2. Fine-tune Qwen3.5-27B on spatial reasoning
+  3. Deploy fine-tuned version in vLLM
+
+ALTERNATIVE: SPECIALIZED MODEL SEARCH
+  1. Research vision-language models with spatial understanding
+  2. Investigate robotics-tuned models (trained on trajectory/arm control)
+  3. Evaluate math reasoning models (coordinate math = structured reasoning)
+
+================================================================================
+10. EXAMPLE INTERACTION FLOW
+================================================================================
+
+INPUT MESSAGE FROM GREEN AGENT:
+  [TASK_DESCRIPTION] Grid: 9x9 cells. Origin="middle square": center (0,0), is highlighted...
+  [SPEAKER] Laura
+  [START_STRUCTURE] Red,0,50,0;Red,-100,50,0;Red,100,50,0
+  There is a red row on the grid. Extend it horizontally by adding two red blocks to its right. 
+  Place one block on top of each end of this extended row.
+
+PURPLE AGENT PROCESSING:
+
+  Stage 1 - Classify:
+    Input: "Extend red row right by 2. Stack 1 on each end."
+    LLM Call: STAGE1_SYSTEM + stage1_user_prompt
+    Output:
+      {
+        "ambiguity": "none",
+        "confidence_in_build": 0.95,
+        "explicitly_mentioned_colors": ["red"],
+        "explicitly_mentioned_counts": {"extend": 2, "stack": 1, "ends": 2},
+        "missing_description": ""
+      }
+    Decision: confidence >= 0.6 & no ambiguity → proceed to Stage 2
+
+  Speaker Profile Update:
+    Laura used: Red, count=2, stack=1 (explicit)
+    Add to profile
+
+  Stage 2 - Generate:
+    Input: Full instruction + START_STRUCTURE + resolution (empty, no ambiguity)
+    LLM Call: STAGE2_SYSTEM + stage2_user_prompt
+    Reasoning (in prompt):
+      "The red row is at Y=50, spanning X from -100 to +100.
+       Extend right by 2: add Red at X=200,Y=50 and X=300,Y=50.
+       Place on top of each end: ends are at X=-100 and X=300.
+       Add Red at X=-100,Y=150 and X=300,Y=150.
+       All blocks: Red,0,50,0;Red,-100,50,0;Red,100,50,0;Red,200,50,0;Red,300,50,0;Red,-100,150,0;Red,300,150,0"
+    Output: [BUILD];Red,0,50,0;Red,-100,50,0;Red,100,50,0;Red,200,50,0;Red,300,50,0;Red,-100,150,0;Red,300,150,0
+
+  Validation:
+    - Format check: ✓ (valid syntax)
+    - Coordinate check: ✓ (all valid x,z,y values)
+
+  Response to GREEN AGENT:
+    [BUILD];Red,0,50,0;Red,-100,50,0;Red,100,50,0;Red,200,50,0;Red,300,50,0;Red,-100,150,0;Red,300,150,0
+
+  GREEN AGENT FEEDBACK:
+    Feedback: Correct structure built! +10 points. Round score: +10
+
+  Profile Update:
+    Laura.correct_builds += 1
+    Laura.color_fills += ["Red"]
+    Laura.count_fills += [2]
+
+================================================================================
+11. KEY FILES & FUNCTIONS
+================================================================================
+
+AGENT ORCHESTRATION:
+  File: purple_openai/agent.py
+  Class: PurplePipeline
+  Key Methods:
+    - __init__(): Initialize async client, state manager
+    - handle_message(raw_text, context_id): Main entry point
+    - _handle_instruction(): Route instruction to Stage 1 → Stage 2
+    - _stage1_classify(): Call LLM for classification
+    - _stage2_build(): Call LLM for coordinate generation
+    - _update_profile_from_feedback(): Learn from feedback
+    - _decide_ask(): Ask clarification question
+    - _find_last_instruction(): Retrieve context
+
+STATE MANAGEMENT:
+  File: purple_openai/state.py
+  Classes:
+    - SessionState: Per-context mutable state
+    - SpeakerProfile: Per-speaker learned conventions
+    - StateManager: Registry of sessions
+    - PendingClassification: Bridge instruction → feedback
+    - ParsedMessage: Parsed message from green agent
+  Key Functions:
+    - parse_message(text): Classify incoming message
+    - MessageType enum: NEW_TASK, FEEDBACK, ANSWER, INSTRUCTION, UNKNOWN
+
+PROMPTS:
+  File: purple_openai/prompts.py
+  Key Variables:
+    - STAGE1_SYSTEM: System prompt for classification
+    - STAGE2_SYSTEM: System prompt for coordinate generation
+    - stage1_user_prompt(): User message template for Stage 1
+    - stage2_user_prompt(): User message template for Stage 2
+
+VALIDATORS:
+  File: purple_openai/validators.py
+  Key Functions:
+    - validate_build_response(): Check format and coordinates
+    - validate_block(): Check individual coordinate validity
+    - _BLOCK_RE: Regex for parsing "Color,x,y,z" blocks
+
+================================================================================
+END OF CONTEXT
+================================================================================
+
+This document should provide sufficient context for an LLM to understand:
+  - The spatial reasoning task
+  - The current two-stage pipeline
+  - Accuracy patterns and error modes
+  - Speaker profiling mechanism
+  - Technology stack and deployment
+  - Current challenges and improvement opportunities
+
+For questions or refinements, reference the specific sections above.

@@ -38,8 +38,10 @@ from prompts import (
     stage1_user_prompt,
     stage2_user_prompt,
 )
-from validators import validate_build_response
+from validators import validate_build_response, validate_block
 
+# Logging is configured by server.py (stdout for containers, file for local dev).
+# This module just gets a named logger.
 logger = logging.getLogger(__name__)
 
 
@@ -66,6 +68,10 @@ class PurplePipeline:
             timeout=timeout,
         )
         self._state_mgr = StateManager()
+        logger.info(
+            "[INIT] PurplePipeline initialized | Model: %s | Temp: %.1f | Timeout: %.1f | Debug: %s",
+            self._model, self._temperature, timeout, self._debug
+        )
 
     # ------------------------------------------------------------------
     # Factory
@@ -98,11 +104,13 @@ class PurplePipeline:
         parsed = parse_message(raw_text)
         session = self._state_mgr.get_or_create(context_id)
 
-        if self._debug:
-            logger.info(
-                "[purple] msg_type=%s  speaker=%s  context=%s",
-                parsed.msg_type, parsed.speaker, context_id,
-            )
+        logger.info("\n" + "="*80)
+        logger.info(
+            "[INPUT] msg_type=%s | speaker=%s | context=%s | text_len=%d",
+            parsed.msg_type, parsed.speaker, context_id, len(raw_text)
+        )
+        logger.info("Raw Message (first 200 chars):\n%s", raw_text[:200])
+        logger.info("="*80)
 
         match parsed.msg_type:
             case MessageType.NEW_TASK:
@@ -124,7 +132,9 @@ class PurplePipeline:
         self, session: SessionState, parsed: ParsedMessage,
     ) -> str:
         """Reset state for a new game seed."""
+        logger.info("[NEW_TASK] Resetting session state for new task")
         session.reset_for_new_seed()
+        logger.info("[NEW_TASK] Session reset complete")
         return "Acknowledged. Ready for the new task."
 
     # ----- feedback ----------------------------------------------------
@@ -133,8 +143,11 @@ class PurplePipeline:
         self, session: SessionState, parsed: ParsedMessage,
     ) -> str:
         """Parse feedback, update speaker profile, acknowledge."""
+        logger.info("[FEEDBACK] Processing feedback | is_correct=%s | target_len=%d", 
+                   parsed.is_correct, len(parsed.target_structure or ""))
         self._update_profile_from_feedback(session, parsed)
         session.conversation.append({"role": "user", "content": parsed.raw})
+        logger.info("[FEEDBACK] Feedback processed, returning acknowledgment")
         return "Acknowledged."
 
     # ----- answer to [ASK] --------------------------------------------
@@ -156,8 +169,15 @@ class PurplePipeline:
         # Retrieve the last instruction from conversation history
         last_instruction, last_start = self._find_last_instruction(session)
 
+        # Retrieve the last question we asked to provide context to Stage 2
+        last_question = "a clarifying question"
+        for msg in reversed(session.conversation):
+            if msg.get("role") == "assistant" and msg.get("content", "").startswith("[ASK];"):
+                last_question = msg["content"][6:].strip()
+                break
+
         if last_instruction:
-            resolution = f"Answer to clarification: {answer_text}"
+            resolution = f"We asked: '{last_question}' -> Answer: '{answer_text}'"
             build = await self._stage2_build(
                 last_instruction, last_start, resolution,
             )
@@ -169,6 +189,9 @@ class PurplePipeline:
         session.conversation.append({"role": "assistant", "content": build})
         if session.pending:
             session.pending.our_build = build
+            # We asked a question and got an answer. This is no longer an
+            # implicit convention to learn, so we stop tracking it as ambiguous.
+            session.pending.ambiguity_type = "none"
         return build
 
     # ----- instruction (main two-stage pipeline) ----------------------
@@ -182,9 +205,13 @@ class PurplePipeline:
         speaker.turns_seen += 1
         session.current_speaker = speaker_name
 
+        logger.info("[INSTRUCTION] Turn %d | Speaker: %s | Instruction: %s", 
+                   session.turn_count, speaker_name, (parsed.instruction_text or parsed.raw)[:100])
+
         session.conversation.append({"role": "user", "content": parsed.raw})
 
         # ── Stage 1: Classify & Extract ──────────────────────────────
+        logger.info("[STAGE1] Starting classification...")
         classification = await self._stage1_classify(
             instruction=parsed.instruction_text or parsed.raw,
             start_structure=parsed.start_structure or "",
@@ -192,16 +219,28 @@ class PurplePipeline:
             speaker_summary=speaker.summary(),
         )
 
-        if self._debug:
-            logger.info("[stage1] %s", json.dumps(classification, indent=2))
+        logger.info("[STAGE1] Classification result:\n%s", json.dumps(classification, indent=2))
 
         ambiguity = classification.get("ambiguity", "none")
         confidence = classification.get("confidence_in_build", 0.5)
         explicit_colors = classification.get("explicitly_mentioned_colors", [])
         explicit_counts = classification.get("explicitly_mentioned_counts", {})
 
+        logger.info("[STAGE1] Ambiguity: %s | Confidence: %.2f | Colors: %s | Counts: %s",
+                   ambiguity, confidence, explicit_colors, explicit_counts)
+
         # ── Decision gate ────────────────────────────────────────────
+        logger.info("[GATE] Evaluating decision gate for ambiguity='%s'", ambiguity)
         resolution: Optional[str] = None
+
+        # [VERSION 1.1] - Hardcoded ASK Failsafe
+        if not explicit_colors and ambiguity != "none" and not speaker.inferred_color():
+            logger.info("[GATE] Failsafe triggered: No explicit colors found and no profile inference")
+            return self._decide_ask(session, speaker_name, "color", classification, explicit_colors, explicit_counts, parsed.start_structure or "")
+            
+        if not explicit_counts and ambiguity != "none" and not speaker.inferred_count():
+            logger.info("[GATE] Failsafe triggered: No explicit counts found and no profile inference")
+            return self._decide_ask(session, speaker_name, "count", classification, explicit_colors, explicit_counts, parsed.start_structure or "")
 
         if ambiguity == "color":
             inferred = speaker.inferred_color()
@@ -211,12 +250,14 @@ class PurplePipeline:
                     f"(based on {speaker_name}'s established pattern: "
                     f"{speaker.color_fills})."
                 )
-                if self._debug:
-                    logger.info("[gate] colour resolved from profile → %s", inferred)
+                logger.info("[GATE] Color resolved from profile → %s (pattern: %s)", inferred, speaker.color_fills)
             elif confidence < 0.6:
+                logger.info("[GATE] Low confidence (%.2f < 0.6), asking for clarification on color", confidence)
                 return self._decide_ask(
-                    session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts,
+                    session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts, parsed.start_structure or ""
                 )
+            else:
+                logger.info("[GATE] No color pattern established yet, but confidence OK (%.2f)", confidence)
 
         elif ambiguity == "count":
             inferred = speaker.inferred_count()
@@ -226,12 +267,14 @@ class PurplePipeline:
                     f"(based on {speaker_name}'s established pattern: "
                     f"{speaker.count_fills})."
                 )
-                if self._debug:
-                    logger.info("[gate] count resolved from profile → %d", inferred)
+                logger.info("[GATE] Count resolved from profile → %d (pattern: %s)", inferred, speaker.count_fills)
             elif confidence < 0.6:
+                logger.info("[GATE] Low confidence (%.2f < 0.6), asking for clarification on count", confidence)
                 return self._decide_ask(
-                    session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts,
+                    session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts, parsed.start_structure or ""
                 )
+            else:
+                logger.info("[GATE] No count pattern established yet, but confidence OK (%.2f)", confidence)
 
         # Store pending for feedback-driven profile update
         session.pending = PendingClassification(
@@ -240,16 +283,22 @@ class PurplePipeline:
             missing_description=classification.get("missing_description", ""),
             explicit_colors=explicit_colors,
             explicit_counts=explicit_counts,
+            start_structure=parsed.start_structure or ""
         )
 
         # ── Stage 2: Generate [BUILD] ────────────────────────────────
+        logger.info("[STAGE2] Starting coordinate generation...")
+        if resolution:
+            logger.info("[STAGE2] Using resolution: %s", resolution)
         build = await self._stage2_build(
             instruction=parsed.instruction_text or parsed.raw,
             start_structure=parsed.start_structure or "",
             resolution=resolution,
         )
 
+        logger.info("[STAGE2] Generated build response: %s", build[:150])
         build = validate_build_response(build)
+        logger.info("[STAGE2] Validated build: %s", build[:150])
         session.pending.our_build = build
         session.conversation.append({"role": "assistant", "content": build})
         return build
@@ -260,11 +309,13 @@ class PurplePipeline:
         self, session: SessionState, parsed: ParsedMessage,
     ) -> str:
         """Handle error / retry messages (e.g. 'Invalid response format')."""
+        logger.info("[UNKNOWN] Handling unknown/error message: %s", parsed.raw[:100])
         session.conversation.append({"role": "user", "content": parsed.raw})
 
         last_instruction, last_start = self._find_last_instruction(session)
 
         if last_instruction:
+            logger.info("[UNKNOWN] Found last instruction, retrying Stage 2 with error context")
             resolution = (
                 f"Your previous attempt had an error: {parsed.raw}  "
                 "Please produce a correct [BUILD] response."
@@ -273,9 +324,11 @@ class PurplePipeline:
                 last_instruction, last_start, resolution,
             )
         else:
+            logger.info("[UNKNOWN] No last instruction, using fallback history")
             build = await self._direct_from_history(session)
 
         build = validate_build_response(build)
+        logger.info("[UNKNOWN] Final build: %s", build[:100])
         session.conversation.append({"role": "assistant", "content": build})
         return build
 
@@ -291,14 +344,30 @@ class PurplePipeline:
         classification: dict,
         explicit_colors: list[str],
         explicit_counts: dict[str, int],
+        start_structure: str,
     ) -> str:
         """Return an [ASK] response and store pending classification."""
-        question = classification.get(
-            "suggested_question",
-            "What colour should the unspecified blocks be?"
-            if ambiguity == "color"
-            else "How many of the unspecified blocks should there be?",
-        )
+        # [VERSION 1.2] - Ask questions matching the question_answerer.py expected format.
+        # The QA system (gpt-4o-mini) is prompted to answer:
+        #   "How many [color] blocks should be in the stack?" → "4 blocks"
+        #   "What color are the [description] blocks?"        → "Red and Blue"
+        # Use the LLM's suggested_question from Stage 1 as the primary source.
+        # Fall back to format-matched defaults only if Stage 1 gave nothing useful.
+        llm_question = classification.get("suggested_question", "").strip()
+
+        if llm_question:
+            question = llm_question
+        elif ambiguity == "color":
+            missing = classification.get("missing_description", "the unspecified blocks")
+            question = f"What color are {missing}?"
+        else:
+            # count ambiguity — ask in exactly the format the QA answerer expects
+            colors = explicit_colors
+            if colors:
+                question = f"How many blocks should be in the {colors[0].lower()} stack?"
+            else:
+                question = "How many blocks should be in the target structure?"
+
         ask_response = f"[ASK];{question}"
 
         session.pending = PendingClassification(
@@ -307,6 +376,7 @@ class PurplePipeline:
             missing_description=classification.get("missing_description", ""),
             explicit_colors=explicit_colors,
             explicit_counts=explicit_counts,
+            start_structure=start_structure,
         )
         session.conversation.append({"role": "assistant", "content": ask_response})
 
@@ -351,7 +421,10 @@ class PurplePipeline:
             {"role": "system", "content": STAGE1_SYSTEM},
             {"role": "user", "content": user_msg},
         ]
+        logger.info("[STAGE1_LLM] Calling LLM for classification...")
+        logger.info("[STAGE1_LLM] User prompt (first 200 chars):\n%s", user_msg[:200])
         raw = await self._llm_call(messages, temperature=0.1, max_tokens=512)
+        logger.info("[STAGE1_LLM] Raw response from LLM:\n%s", raw)
 
         try:
             clean = raw.strip()
@@ -361,9 +434,11 @@ class PurplePipeline:
                 if clean.endswith("```"):
                     clean = clean[:-3]
                 clean = clean.strip()
-            return json.loads(clean)
+            result = json.loads(clean)
+            logger.info("[STAGE1_LLM] Successfully parsed JSON classification")
+            return result
         except json.JSONDecodeError:
-            logger.warning("[stage1] invalid JSON: %.200s", raw)
+            logger.warning("[STAGE1_LLM] Invalid JSON: %.200s", raw)
             return {
                 "ambiguity": "none",
                 "missing_description": "",
@@ -385,7 +460,13 @@ class PurplePipeline:
             {"role": "system", "content": STAGE2_SYSTEM},
             {"role": "user", "content": user_msg},
         ]
-        return await self._llm_call(messages)
+        logger.info("[STAGE2_LLM] Calling LLM for coordinate generation...")
+        logger.info("[STAGE2_LLM] User prompt (first 200 chars):\n%s", user_msg[:200])
+        if resolution:
+            logger.info("[STAGE2_LLM] Resolution provided: %s", resolution)
+        raw = await self._llm_call(messages)
+        logger.info("[STAGE2_LLM] Raw response from LLM:\n%s", raw)
+        return raw
 
     async def _llm_call(
         self,
@@ -433,22 +514,30 @@ class PurplePipeline:
         """After green-agent feedback, update the speaker profile."""
         pending = session.pending
         if not pending:
+            logger.info("[PROFILE] No pending classification to update")
             return
 
         speaker = session.get_or_create_speaker(pending.speaker_name)
 
         if parsed.is_correct is True:
             speaker.correct_builds += 1
+            logger.info("[PROFILE] Feedback: CORRECT | %s now has %d correct builds", 
+                       pending.speaker_name, speaker.correct_builds)
         elif parsed.is_correct is False:
             speaker.incorrect_builds += 1
+            logger.info("[PROFILE] Feedback: INCORRECT | %s now has %d incorrect builds", 
+                       pending.speaker_name, speaker.incorrect_builds)
 
         # Extract fill values if we had an ambiguity and target is available
         if (
             pending.ambiguity_type in ("color", "count")
             and parsed.target_structure
         ):
+            logger.info("[PROFILE] Learning from ambiguity='%s' with target: %s", 
+                       pending.ambiguity_type, parsed.target_structure[:100])
             self._extract_fill_from_target(pending, speaker, parsed.target_structure)
 
+        logger.info("[PROFILE] Updated speaker '%s': %s", pending.speaker_name, speaker.summary())
         session.pending = None
 
     @staticmethod
@@ -459,24 +548,45 @@ class PurplePipeline:
     ) -> None:
         """Compare the target structure against what was explicitly mentioned
         to determine the actual fill value and record it in the speaker profile."""
-        blocks = [b.strip() for b in target_structure.split(";") if b.strip()]
+        logger.info("[EXTRACT] Extracting fill from target | speaker: %s | ambiguity: %s", 
+                   speaker.name, pending.ambiguity_type)
+        raw_target_blocks = [b.strip() for b in target_structure.split(";") if b.strip()]
+        raw_start_blocks = [b.strip() for b in pending.start_structure.split(";") if b.strip()]
+
+        # Normalize to ensure exact matching
+        target_blocks = [validate_block(b) for b in raw_target_blocks if validate_block(b)]
+        start_blocks = [validate_block(b) for b in raw_start_blocks if validate_block(b)]
+
+        target_counter = Counter(target_blocks)
+        start_counter = Counter(start_blocks)
+
+        added_blocks = []
+        for block, total_count in target_counter.items():
+            diff = total_count - start_counter.get(block, 0)
+            for _ in range(diff):
+                added_blocks.append(block)
+
+        logger.info("[EXTRACT] Added blocks (diff from start→target): %s", added_blocks)
+
         target_colors: list[str] = []
-        for block in blocks:
+        for block in added_blocks:
             parts = block.split(",")
             if len(parts) == 4:
                 target_colors.append(parts[0].strip().capitalize())
 
         if not target_colors:
+            logger.info("[EXTRACT] No colors found in added blocks")
             return
 
         if pending.ambiguity_type == "color":
             # The fill colour = target colours NOT in the explicitly mentioned set
             explicit_set = {c.capitalize() for c in pending.explicit_colors}
             fill_colors = {c for c in target_colors if c not in explicit_set}
+            logger.info("[EXTRACT] Explicit colors: %s | Fill colors: %s", explicit_set, fill_colors)
             for fc in fill_colors:
                 speaker.color_fills.append(fc)
                 logger.info(
-                    "[profile] %s color_fill += %s", speaker.name, fc,
+                    "[EXTRACT] Learned: %s favors color %s", speaker.name, fc,
                 )
 
         elif pending.ambiguity_type == "count":
@@ -486,6 +596,7 @@ class PurplePipeline:
             explicit_count_keys = {
                 k.capitalize() for k in pending.explicit_counts
             }
+            logger.info("[EXTRACT] Target counts: %s | Explicit count keys: %s", target_counts, explicit_count_keys)
             for color, count in target_counts.items():
                 if color not in explicit_count_keys:
                     speaker.count_fills.append(count)

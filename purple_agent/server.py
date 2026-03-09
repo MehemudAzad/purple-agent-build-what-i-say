@@ -5,7 +5,7 @@ Exposes an A2A-compliant endpoint that the green agent (benchmark) talks to.
 Delegates all reasoning to ``agent.PurplePipeline`` (two-stage LLM pipeline).
 
 Usage:
-    python purple_openai/server.py --host 127.0.0.1 --port 9022 --debug
+    python purple_agent/server.py --host 127.0.0.1 --port 9022 --debug
 """
 
 from __future__ import annotations
@@ -49,7 +49,7 @@ def prepare_agent_card(url: str) -> AgentCard:
         examples=[],
     )
     return AgentCard(
-        name="purple_openai_agent",
+        name="purple_agent",
         description=(
             "LLM-powered purple agent (rita) for the Build-What-I-Mean benchmark. "
             "Two-stage pipeline: Stage 1 classifies ambiguity, Stage 2 generates "
@@ -120,10 +120,18 @@ def main() -> None:
     }
     debug = args.debug or debug_env
 
-    logging.basicConfig(
-        level=logging.INFO if debug else logging.WARNING,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-    )
+    log_level = logging.DEBUG if debug else logging.INFO
+    log_fmt = "%(asctime)s %(levelname)s %(name)s: %(message)s"
+    handlers: list[logging.Handler] = [logging.StreamHandler()]  # always stdout
+
+    # Optionally also write to a local file (useful for local dev, skipped in containers)
+    local_log = os.getenv("PURPLE_LOG_FILE", "")
+    if local_log:
+        fh = logging.FileHandler(local_log, mode="a")
+        fh.setFormatter(logging.Formatter(log_fmt))
+        handlers.append(fh)
+
+    logging.basicConfig(level=log_level, format=log_fmt, handlers=handlers, force=True)
 
     card_url = args.card_url
     if not card_url:

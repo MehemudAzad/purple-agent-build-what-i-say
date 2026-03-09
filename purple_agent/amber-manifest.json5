@@ -1,0 +1,44 @@
+{
+  manifest_version: "0.1.0",
+
+  // Environment variables / secrets this agent needs from the deployer
+  config_schema: {
+    type: "object",
+    properties: {
+      // Required: your OpenAI-compatible API key
+      openai_api_key: { type: "string", secret: true },
+      // Optional: custom base URL for self-hosted models (e.g. vLLM / Kaggle)
+      // Leave empty or omit to use the standard OpenAI API
+      openai_base_url: { type: "string", secret: false },
+      // Optional: model name override (default: gpt-4o)
+      openai_model: { type: "string", secret: false },
+    },
+    required: ["openai_api_key"],
+    additionalProperties: false,
+  },
+
+  program: {
+    // TODO: replace with your actual ghcr.io image after pushing
+    image: "ghcr.io/<your-username>/<your-repo-name>:latest",
+    entrypoint: "uv run python server.py --host 0.0.0.0 --port 9022",
+
+    env: {
+      OPENAI_API_KEY: "${config.openai_api_key}",
+      OPENAI_BASE_URL: "${config.openai_base_url}",
+      OPENAI_MODEL: "${config.openai_model}",
+    },
+
+    network: {
+      endpoints: [
+        { name: "a2a_endpoint", port: 9022 },
+      ],
+    },
+  },
+
+  // This agent provides an A2A endpoint (the green agent talks to it)
+  provides: {
+    a2a: { kind: "a2a", endpoint: "a2a_endpoint" },
+  },
+
+  exports: { a2a: "a2a" },
+}

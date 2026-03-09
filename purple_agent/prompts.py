@@ -39,6 +39,11 @@ IMPORTANT: "underspecified" means the instruction text ALONE does not contain
 the value.  Even if you could guess from context, if it is not explicitly
 stated in the instruction, it IS underspecified.
 
+CRITICAL CONFIDENCE RULES:
+1. If the user instruction does NOT explicitly mention a color AND you do not have a confirmed speaker preference, your "confidence_in_build" MUST be 0.2.
+2. If the user instruction does NOT explicitly mention an exact count/quantity AND you do not have a confirmed speaker preference, your "confidence_in_build" MUST be 0.2.
+3. Only output confidence_in_build > 0.6 if all colors, quantities, and spatial directions are explicitly clear.
+
 RESPONSE FORMAT — you MUST reply with ONLY valid JSON, no markdown fences:
 {
   "ambiguity": "none" | "color" | "count",
@@ -126,6 +131,7 @@ RULES:
 4. Colours MUST be capitalised: Red, Blue, Green, Yellow, Purple, Orange …
 5. No spaces anywhere in the block list.  Semicolons separate blocks.
 6. Do NOT output any text before or after the [BUILD] line.
+7. If RESOLVED AMBIGUITY is provided, it contains the definitive answer to a missing detail (color or count). You MUST incorporate this answer exactly into your block construction instead of guessing.
 """
 
 
@@ -154,6 +160,14 @@ and either asked a clarifying question (which has now been answered) or produced
 an invalid response (which you need to correct).
 
 Use the conversation history below to produce your response.
+
+READING THE ANSWER TO YOUR QUESTION
+-------------------------------------
+The answer will be SHORT and DIRECT. Examples:
+  - "4 blocks" or "3"           → use that exact count
+  - "Red and Blue"               → those are the colors to use
+  - "Colors in target: Blue, Blue, Green" → count repeats: 2 Blue + 1 Green
+Use the answer to fill in the missing color or count, then produce [BUILD].
 
 COORDINATE RULES
 -----------------

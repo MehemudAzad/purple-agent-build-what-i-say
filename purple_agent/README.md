@@ -72,38 +72,45 @@ Purple agent  ←  [BUILD];Color,x,y,z;...  ←───────────
 ```
 purple_openai/          ← you are here (project root)
 ├── server.py           ← A2A server entry point
-├── agent.py            ← two-stage pipeline (PurplePipeline)
-├── state.py            ← session / speaker-profile state management
-├── prompts.py          ← LLM prompt templates
-├── validators.py       ← coordinate validation + response format
-├── pyproject.toml
-├── Dockerfile
-├── .env.example
-└── tests/
-    └── test_purple.py  ← unit / smoke tests (no LLM calls)
+.agentbeats/
+    ├── README.md
+    ├── build_what_i_mean/
+    └── purple_agent/          ← you are here (project root)
+        ├── server.py           ← A2A server entry point
+        ├── agent.py            ← two-stage pipeline (PurplePipeline)
+        ├── state.py            ← session / speaker-profile state management
+        ├── prompts.py          ← LLM prompt templates
+        ├── validators.py       ← coordinate validation + response format
+        ├── pyproject.toml
+        ├── Dockerfile
+        ├── .env.example
+        └── tests/
+            └── test_purple.py  ← unit / smoke tests (no LLM calls)
 ```
 
 ---
 
 ## Quick start
 
-### 1. Install dependencies
+### 1. Configure the Agent
 
-```bash
-uv sync
-```
-
-### 2. Configure environment
+Make a copy of the default environment variables:
 
 ```bash
 cp .env.example .env
-# Edit .env and fill in OPENAI_API_KEY
+```
+Edit `.env` to provide your API key and preferred model:
+
+```ini
+OPENAI_API_KEY="sk-..."
+PURPLE_MODEL="gpt-4o"
 ```
 
-### 3. Run the server
+### 2. Run the Web Server Locally
+The benchmark orchestrator interacts with this agent via a local HTTP server using the A2A protocol.
 
 ```bash
-# From this directory (purple_openai/)
+# From this directory (purple_agent/)
 uv run python server.py --host 127.0.0.1 --port 9022
 
 # Or using the installed script entry point

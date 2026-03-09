@@ -103,6 +103,7 @@ class PendingClassification:
     explicit_colors: list[str] = field(default_factory=list)
     explicit_counts: dict[str, int] = field(default_factory=dict)
     our_build: Optional[str] = None
+    start_structure: str = ""
 
 
 # ---------------------------------------------------------------------------
