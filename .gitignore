@@ -1,1 +1,6 @@
-qwen-mode-inference
+qwen-model-inference/
+.DS_Store
+__pycache__/
+*.pyc
+logs/
+.env
