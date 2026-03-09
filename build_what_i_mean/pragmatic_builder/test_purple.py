@@ -1,6 +1,6 @@
 """Quick smoke tests for validators + state modules."""
 import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "purple_openai"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "purple_agent"))
 
 from validators import validate_build_response, validate_block, snap, VALID_XZ, VALID_Y
 from state import parse_message, MessageType, SessionState, SpeakerProfile
