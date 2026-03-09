@@ -4,7 +4,7 @@ cmd = "python evaluator_proxy.py --host 127.0.0.1 --port 9009"
 
 [[participants]]
 role = "rita"
-# endpoint = "http://127.0.0.1:9022"
+endpoint = "http://127.0.0.1:9022"
 cmd = "uv run --directory ../../purple_openai python server.py --host 127.0.0.1 --port 9022"
 
 [config]

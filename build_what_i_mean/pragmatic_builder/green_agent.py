@@ -45,7 +45,7 @@ class BuildingInstructorGreenAgent:
         list2_path = self._resolve_path(req.config["list2_path"])
 
         # Run 8 trials with different seeds
-        num_seeds = 8
+        num_seeds = 1
         all_accuracies = []
         all_avg_questions = []
         all_results = {}

@@ -43,7 +43,10 @@ class QuestionAnswerer:
             return DummyQuestionAnswerer()
         if mode != "openai":
             return None
-        api_key = os.getenv("OPENAI_API_KEY", "").strip()
+        api_key = os.getenv("GREEN_AGENT_OPENAI_API_KEY", "").strip()
+        if not api_key:
+            api_key = os.getenv("OPENAI_API_KEY", "").strip()
+        
         if not api_key:
             return None
         model = "gpt-4o-mini"  # FIXED: Always use gpt-4o-mini for Q&A
