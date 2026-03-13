@@ -1,5 +1,4 @@
 .idea/*
-*/logs/
 .env
 .DS_Store
 .python-version
