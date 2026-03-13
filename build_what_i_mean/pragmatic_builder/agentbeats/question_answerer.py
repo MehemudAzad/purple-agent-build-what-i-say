@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from dataclasses import dataclass
 from typing import Optional, Protocol
 
@@ -49,7 +50,7 @@ class QuestionAnswerer:
         
         if not api_key:
             return None
-        model = "gpt-4o-mini"  # FIXED: Always use gpt-4o-mini for Q&A
+        model = os.getenv("GREEN_AGENT_MODEL", "nvidia/nemotron-3-super-120b-a12b:free").strip()
         base_url = os.getenv("OPENAI_BASE_URL", "").strip() or None
         timeout = float(os.getenv("OPENAI_TIMEOUT", "30"))
         temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.2"))
@@ -100,11 +101,15 @@ class QuestionAnswerer:
                 "temperature": self.temperature,
             }
             
-            # GPT-4o and newer models use max_completion_tokens instead of max_tokens
-            if "gpt-4o" in self.model or "gpt-4-turbo" in self.model:
+            # GPT-4o, o1/o3, and newer models use max_completion_tokens instead of max_tokens
+            if any(tag in self.model.lower() for tag in ("gpt-4o", "gpt-4-turbo", "o1", "o3", "v3.2")):
                 api_params["max_completion_tokens"] = self.max_tokens
             else:
                 api_params["max_tokens"] = self.max_tokens
+
+            # Enable reasoning for supported models
+            if any(tag in self.model.lower() for tag in ("nemotron", "o1", "o3", "deepseek-r1", "v3.2")):
+                api_params["extra_body"] = {"reasoning": {"enabled": True}}
             
             response = await self._client.chat.completions.create(**api_params)
         except Exception as exc:
@@ -112,5 +117,7 @@ class QuestionAnswerer:
             return "Unable to answer the question right now."
 
         choice = response.choices[0].message
-        content = (choice.content or "").strip()
-        return content or "No answer."
+        raw = choice.content or ""
+        # Strip <thinking> tags if present
+        clean = re.sub(r"<thinking>.*?</thinking>", "", raw, flags=re.DOTALL).strip()
+        return clean or raw or "No answer."

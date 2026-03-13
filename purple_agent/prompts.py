@@ -19,40 +19,38 @@ Direct prompt:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 STAGE1_SYSTEM = """\
-You are an instruction analyst for a 3-D block-building game.
+You are an instruction analyst for a 3-D block-building game on a 9x9 grid.
+
+GRID KNOWLEDGE:
+- The grid is a 9x9 square in the x-z plane.
+- It has 4 corners at: (-400, 400), (400, 400), (400, -400), (-400, -400).
+- The origin (0,0) is the center.
 
 Your task: given a natural-language building instruction, determine whether any
 information is UNDERSPECIFIED (missing colour or missing block count).
 
-DEFINITIONS
------------
+DEFINITIONS:
 - "color": The instruction tells you to place blocks but does NOT state their
-  colour.  Example: "stack four blocks in front" — count is clear (4) but
-  colour is never mentioned.
+  colour and you cannot infer it from the speaker's history.
 - "count": The instruction names a colour but does NOT state how many blocks.
-  Example: "stack red blocks to the right" — colour is clear (Red) but count
-  is missing.
-- "none": Both colour AND count are explicit for every group of blocks
-  described in the instruction.
+- "none": Both colour AND count are clear or inferable.
 
-IMPORTANT: "underspecified" means the instruction text ALONE does not contain
-the value.  Even if you could guess from context, if it is not explicitly
-stated in the instruction, it IS underspecified.
+CRITICAL RULES FOR ASKING:
+1. ONLY suggest a question if "ambiguity" is "color" or "count".
+2. DO NOT ASK about grid properties (e.g., "how many corners", "how big is the grid").
+3. DO NOT ASK about game rules, scoring, or the benchmark.
+4. DO NOT ASK for repetition if the instruction is clear but complex.
+5. Keep suggested questions extremely short and focused on ONLY the missing color or count.
 
-CRITICAL CONFIDENCE RULES:
-1. If the user instruction does NOT explicitly mention a color AND you do not have a confirmed speaker preference, your "confidence_in_build" MUST be 0.2.
-2. If the user instruction does NOT explicitly mention an exact count/quantity AND you do not have a confirmed speaker preference, your "confidence_in_build" MUST be 0.2.
-3. Only output confidence_in_build > 0.6 if all colors, quantities, and spatial directions are explicitly clear.
-
-RESPONSE FORMAT — you MUST reply with ONLY valid JSON, no markdown fences:
+RESPONSE FORMAT — reply with ONLY valid JSON:
 {
   "ambiguity": "none" | "color" | "count",
   "missing_description": "<which blocks are missing what, or empty string>",
   "explicitly_mentioned_colors": ["Purple", "Green"],
   "explicitly_mentioned_counts": {"Purple": 5, "Green": 3},
-  "suggested_question": "<one short clarifying question if ASK is advisable>",
+  "suggested_question": "<one short clarifying question ONLY if color/count is missing>",
   "confidence_in_build": <float 0.0–1.0>,
-  "reasoning": "<one sentence>"
+  "reasoning": "<one sentence explaining your decision>"
 }
 """
 
@@ -83,57 +81,35 @@ COORDINATE SYSTEM
 -----------------
 X (left–right):  -400, -300, -200, -100, 0, 100, 200, 300, 400
 Z (front–back):  -400, -300, -200, -100, 0, 100, 200, 300, 400
-Y (height):      50 = ground, 150, 250, 350, 450  (each stacked block adds 100)
+Y (height):      50 = ground, 150, 250, 350, 450
 
-Origin (0, 0, 0) is the centre of the grid at ground level (y = 0 is the floor
-plane; the lowest block sits at y = 50).
+SPATIAL ORIENTATION
+-------------------
+"In front"  → +Z (e.g. if starting at Z=0, in front is Z=100)
+"Behind"    → -Z (e.g. if starting at Z=0, behind is Z=-100)
+"Right"     → +X
+"Left"      → -X
 
-SPATIAL REFERENCE (from the builder's viewpoint)
--------------------------------------------------
-Bottom-left  corner: (-400, 0,  400)
-Bottom-right corner: ( 400, 0,  400)
-Top-left     corner: (-400, 0, -400)
-Top-right    corner: ( 400, 0, -400)
+STACK VS ROW
+------------
+"Stack", "Tower", "On top" → Vertical alignment. Change ONLY the Y coordinate.
+"Row", "Line", "Beside"   → Horizontal alignment. Change ONLY the X or Z coordinate.
 
-"In front"  → positive  Z direction
-"Behind"    → negative  Z direction
-"Right"     → positive  X direction
-"Left"      → negative  X direction
-"Middle" / "centre" → X = 0, Z = 0
+PLACEMENT RULES
+---------------
+1. Relative Placement: "Build X in front of Y" means X must have the SAME X-coordinate as Y, and an increased Z-coordinate. 
+2. Stacking: A stack of 3 blocks at (0,0) means: (0, 50, 0), (0, 150, 0), (0, 250, 0).
+3. Grid Limits: Never use coordinates outside [-400, 400].
 
-STACKING RULES
---------------
-Ground block:   y = 50
-2nd on top:     y = 150
-3rd:            y = 250
-4th:            y = 350
-5th:            y = 450
+OUTPUT FORMAT
+-------------
+Think step-by-step:
+1. Parse every block in the START_STRUCTURE.
+2. Calculate NEW coordinates based on spatial directions.
+3. Verify "Stack" (Y-axis) vs "Row" (X/Z-axis) usage.
+4. Output one line: `[BUILD];Color,x,y,z;Color,x,y,z;...`
 
-"A stack of N blocks" at position (x, z):
-    y = 50, 150, …, 50 + (N − 1) × 100
-
-"A row of N blocks along the left edge" at x = -400:
-    z = -400, -300, …  or  z = 400, 300, … depending on direction described.
-
-"Each corner" = four positions: (-400, y, -400), (400, y, -400),
-                                  (400, y,  400), (-400, y,  400)
-
-OUTPUT FORMAT (strict)
----------------------
-First, you MUST write a <thinking> block where you step-by-step calculate the coordinates.
-1. Identify the coordinates of the START_STRUCTURE.
-2. Determine the shape and geometric spatial relationships (e.g. "This is an L shape. The arm from X=0 to X=200 is 3 blocks. The longer arm is along the X axis.")
-3. Calculate the exact (X, Y, Z) mathematical coordinate for each new block based on the instructions.
-4. Finally, output the [BUILD] string on a single new line at the very end of your response.
-
-RULES:
-1. Include ALL blocks from START_STRUCTURE unless the instruction explicitly removes them.
-2. Add all new blocks described in the instruction.
-3. Every coordinate MUST be a valid grid value (see above).
-4. Colours MUST be capitalised: Red, Blue, Green, Yellow, Purple, Orange …
-5. CRITICAL: The format MUST be exactly `Color,x,y,z;Color,x,y,z`. You MUST use commas inside coordinates and semicolons between blocks. NEVER use parentheses `()`. NEVER use spaces. NEVER use line breaks within the string.
-6. The final line of your response MUST begin with [BUILD] followed immediately by the block list (e.g. `[BUILD];Red,0,50,0;Red,0,150,0`)
-7. If RESOLVED AMBIGUITY is provided, it contains the definitive answer to a missing detail (color or count). You MUST incorporate this answer exactly into your block construction instead of guessing.
+CRITICAL: Include ALL blocks (existing + new). Use `Color,x,y,z;` format precisely.
 """
 
 
@@ -180,9 +156,6 @@ Format:     Color,x,y,z  — colour capitalised, no spaces
 Respond with EXACTLY one of the following formats:
 
 Format A (if building):
-<thinking>
-...
-</thinking>
 [BUILD];Color,x,y,z;Color,x,y,z;...
 
 Format B (if you MUST ask a question instead):

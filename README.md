@@ -47,3 +47,11 @@ You can look at the latest folder inside there to see how the system scored your
 
 ---
 For detailed information about the inner workings of the Purple Agent's two-stage architecture, pragmatic inference rules, and local development, please see [`purple_agent/README.md`](purple_agent/README.md).
+
+### run with debug mode
+```
+cd /Users/mehemudazad/Desktop/agentbeats/purple-agent/build_what_i_mean/pragmatic_builder
+
+AGENT_QA_MODE=openai AGENT_TRANSCRIPT_DIR=logs/transcripts AGENT_DEBUG=1 \
+uv run python -m agentbeats.run_scenario scenario_openai_purple.toml --show-logs
+```

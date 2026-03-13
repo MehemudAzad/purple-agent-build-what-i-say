@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from collections import Counter
 from typing import Optional
 
@@ -51,6 +52,7 @@ class PurplePipeline:
     def __init__(
         self,
         model: str = "gpt-4o",
+        stage1_model: str | None = None,
         api_key: str = "",
         base_url: Optional[str] = None,
         temperature: float = 0.2,
@@ -59,6 +61,7 @@ class PurplePipeline:
         debug: bool = False,
     ) -> None:
         self._model = model
+        self._stage1_model = stage1_model or model  # fall back to main model
         self._temperature = temperature
         self._max_tokens = max_tokens
         self._debug = debug
@@ -67,10 +70,12 @@ class PurplePipeline:
             base_url=base_url or None,
             timeout=timeout,
         )
+        # Stage 1 uses the same API/base_url but potentially a different model
+        self._stage1_client = self._client
         self._state_mgr = StateManager()
         logger.info(
-            "[INIT] PurplePipeline initialized | Model: %s | Temp: %.1f | Timeout: %.1f | Debug: %s",
-            self._model, self._temperature, timeout, self._debug
+            "[INIT] PurplePipeline initialized | Model: %s | Stage1Model: %s | Temp: %.1f | Timeout: %.1f | Debug: %s",
+            self._model, self._stage1_model, self._temperature, timeout, self._debug
         )
 
     # ------------------------------------------------------------------
@@ -87,6 +92,7 @@ class PurplePipeline:
                 "PURPLE_MODEL",
                 os.environ.get("OPENAI_MODEL", "gpt-4o"),
             ).strip(),
+            stage1_model=os.environ.get("PURPLE_STAGE1_MODEL", "").strip() or None,
             api_key=api_key,
             base_url=os.environ.get("OPENAI_BASE_URL", "").strip() or None,
             temperature=float(os.environ.get("PURPLE_TEMPERATURE", "0.2")),
@@ -423,11 +429,27 @@ class PurplePipeline:
         ]
         logger.info("[STAGE1_LLM] Calling LLM for classification...")
         logger.info("[STAGE1_LLM] User prompt (first 200 chars):\n%s", user_msg[:200])
-        raw = await self._llm_call(messages, temperature=0.1, max_tokens=512)
+        # Only pass reasoning extra_body for models that support it
+        _reasoning_models = ("nemotron", "o1", "o3", "deepseek-r1", "v3.2")
+        stage1_extra = (
+            {"reasoning": {"enabled": True}}
+            if any(tag in self._stage1_model.lower() for tag in _reasoning_models)
+            else None
+        )
+        raw = await self._llm_call(
+            messages,
+            temperature=0.1,
+            max_tokens=512,
+            extra_body=stage1_extra,
+            model=self._stage1_model,
+            client=self._stage1_client,
+        )
         logger.info("[STAGE1_LLM] Raw response from LLM:\n%s", raw)
 
         try:
             clean = raw.strip()
+            # Strip <thinking>...</thinking> blocks emitted by reasoning models (e.g. Nemotron)
+            clean = re.sub(r"<thinking>.*?</thinking>", "", clean, flags=re.DOTALL).strip()
             # Strip markdown code fences
             if clean.startswith("```"):
                 clean = clean.split("\n", 1)[1] if "\n" in clean else clean[3:]
@@ -466,20 +488,77 @@ class PurplePipeline:
             logger.info("[STAGE2_LLM] Resolution provided: %s", resolution)
         
         # We need slightly higher tokens because we're doing Chain of Thought now.
-        raw = await self._llm_call(messages, max_tokens=2048)
+        # Only pass reasoning extra_body for models that support it
+        _reasoning_models = ("nemotron", "o1", "o3", "deepseek-r1", "v3.2")
+        stage2_extra = (
+            {"reasoning": {"enabled": True}}
+            if any(tag in self._model.lower() for tag in _reasoning_models)
+            else None
+        )
+        raw = await self._llm_call(
+            messages,
+            max_tokens=2048,
+            extra_body=stage2_extra,
+        )
         logger.info("[STAGE2_LLM] Raw response from LLM:\n%s", raw)
 
-        # Extract the actual [BUILD] string from the CoT response
+        # Reasoning models (e.g. Nemotron) may wrap ALL output inside <thinking>...</thinking>.
+        # So we search for [BUILD] in the FULL raw text first (including any thinking block).
         build_line = ""
         for line in raw.split("\n"):
             line = line.strip()
             if line.startswith("[BUILD]"):
                 build_line = line
                 break
-        
+
         if not build_line:
-            logger.warning("[STAGE2_LLM] LLM failed to output a [BUILD] line, falling back to raw")
-            build_line = raw
+            # Strip thinking tags and try again (model may have put [BUILD] after </thinking>)
+            clean_raw = re.sub(r"<thinking>.*?</thinking>", "", raw, flags=re.DOTALL).strip()
+            for line in clean_raw.split("\n"):
+                line = line.strip()
+                if line.startswith("[BUILD]"):
+                    build_line = line
+                    break
+
+        if not build_line.strip():
+            logger.warning("[STAGE2_LLM] Primary model returned empty. Trying fallback model (%s)...", self._stage1_model)
+            fallback_raw = await self._llm_call(
+                messages,
+                max_tokens=2048,
+                model=self._stage1_model,
+                client=self._stage1_client,
+                # Reuse stage1 reasoning check
+                extra_body=(
+                    {"reasoning": {"enabled": True}}
+                    if any(tag in self._stage1_model.lower() for tag in ("nemotron", "o1", "o3", "deepseek-r1", "v3.2"))
+                    else None
+                )
+            )
+            logger.info("[STAGE2_LLM] Fallback response from LLM:\n%s", fallback_raw)
+            raw = fallback_raw
+            # Re-parse build_line from fallback
+            for line in raw.split("\n"):
+                line = line.strip()
+                if line.startswith("[BUILD]"):
+                    build_line = line
+                    break
+            if not build_line:
+                clean_raw = re.sub(r"<thinking>.*?</thinking>", "", raw, flags=re.DOTALL).strip()
+                for line in clean_raw.split("\n"):
+                    line = line.strip()
+                    if line.startswith("[BUILD]"):
+                        build_line = line
+                        break
+            if not build_line:
+                build_line = re.sub(r"<thinking>.*?</thinking>", "", raw, flags=re.DOTALL).strip() or raw
+
+        # FINAL FAILSAFE: If the response is still empty or looks like an accidental ASK,
+        # return a clean [ASK] for the validator to handle.
+        if not build_line.strip() or build_line.startswith("[ASK]"):
+            if not build_line.strip():
+                logger.error("[STAGE2_LLM] CRITICAL: Both primary and fallback models failed.")
+                return "[ASK];I'm sorry, I'm having trouble processing that instruction. Could you repeat it with more detail?"
+            return build_line
 
         # Auto-correct common LLM formatting mistakes like `Green(0,50,0)` instead of `Green,0,50,0;`
         if build_line.startswith("[BUILD]"):
@@ -506,11 +585,16 @@ class PurplePipeline:
         messages: list[dict[str, str]],
         temperature: float | None = None,
         max_tokens: int | None = None,
+        extra_body: dict | None = None,
+        model: str | None = None,
+        client: AsyncOpenAI | None = None,
     ) -> str:
         """Single OpenAI chat completions call with error handling."""
+        _client = client or self._client
+        _model = model or self._model
         try:
             params: dict = {
-                "model": self._model,
+                "model": _model,
                 "messages": messages,
                 "temperature": (
                     temperature if temperature is not None else self._temperature
@@ -520,15 +604,28 @@ class PurplePipeline:
 
             # Newer OpenAI models expect max_completion_tokens
             if any(
-                tag in self._model
+                tag in _model
                 for tag in ("gpt-4o", "gpt-4-turbo", "gpt-4.1", "o1", "o3", "o4")
             ):
                 params["max_completion_tokens"] = mt
             else:
                 params["max_tokens"] = mt
 
-            completion = await self._client.chat.completions.create(**params)
-            return (completion.choices[0].message.content or "").strip()
+            if extra_body:
+                params["extra_body"] = extra_body
+
+            completion = await _client.chat.completions.create(**params)
+            msg = completion.choices[0].message
+            content = (msg.content or "").strip()
+            # For reasoning models, content may be empty while the answer is
+            # in reasoning_details — extract from there as fallback.
+            if not content and hasattr(msg, "reasoning_details") and msg.reasoning_details:
+                for detail in msg.reasoning_details:
+                    text = getattr(detail, "text", None) or ""
+                    if text.strip():
+                        content = text.strip()
+                        break
+            return content
 
         except Exception as exc:
             logger.error("LLM call failed: %s", exc)
@@ -536,6 +633,7 @@ class PurplePipeline:
                 "[ASK];I encountered an error processing this instruction. "
                 "Could you repeat it?"
             )
+
 
     # ==================================================================
     # Profile update from feedback

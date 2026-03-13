@@ -84,6 +84,8 @@ def validate_build_response(response: str) -> str:
     even if some blocks were dropped).
     """
     response = response.strip()
+    if response.startswith("[ASK]"):
+        return response
 
     # If the model wrapped between markdown code fences, unwrap
     if "```" in response:

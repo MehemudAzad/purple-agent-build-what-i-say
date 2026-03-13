@@ -19,7 +19,7 @@ from a2a.types import (
 )
 
 
-DEFAULT_TIMEOUT = 1500
+DEFAULT_TIMEOUT = None  # No timeout — benchmark runs can take many minutes
 
 
 def create_message(*, role: Role = Role.user, text: str, context_id: str | None = None) -> Message:

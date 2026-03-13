@@ -35,7 +35,7 @@ class BuildingInstructorGreenAgent:
     async def _debug_pause(self, prompt: str) -> None:
         if not self._debug or not sys.stdin.isatty():
             return
-            return
+        return
         await asyncio.to_thread(input, prompt)
 
     async def run_eval(self, req: EvalRequest, updater: TaskUpdater) -> None:
