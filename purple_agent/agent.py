@@ -65,6 +65,7 @@ class PurplePipeline:
         self._temperature = temperature
         self._max_tokens = max_tokens
         self._debug = debug
+
         self._client = AsyncOpenAI(
             api_key=api_key,
             base_url=base_url or None,
@@ -115,7 +116,7 @@ class PurplePipeline:
             "[INPUT] msg_type=%s | speaker=%s | context=%s | text_len=%d",
             parsed.msg_type, parsed.speaker, context_id, len(raw_text)
         )
-        logger.info("Raw Message (first 200 chars):\n%s", raw_text[:200])
+        logger.info("Raw Message:\n%s", raw_text)
         logger.info("="*80)
 
         match parsed.msg_type:
@@ -212,14 +213,14 @@ class PurplePipeline:
         session.current_speaker = speaker_name
 
         logger.info("[INSTRUCTION] Turn %d | Speaker: %s | Instruction: %s", 
-                   session.turn_count, speaker_name, (parsed.instruction_text or parsed.raw)[:100])
+                   session.turn_count, speaker_name, (parsed.instruction_text or parsed.raw))
 
         session.conversation.append({"role": "user", "content": parsed.raw})
 
         # ── Stage 1: Classify & Extract ──────────────────────────────
         logger.info("[STAGE1] Starting classification...")
         classification = await self._stage1_classify(
-            instruction=parsed.instruction_text or parsed.raw,
+            instruction=parsed.instruction_text or "",
             start_structure=parsed.start_structure or "",
             speaker_name=speaker_name,
             speaker_summary=speaker.summary(),
@@ -239,48 +240,14 @@ class PurplePipeline:
         logger.info("[GATE] Evaluating decision gate for ambiguity='%s'", ambiguity)
         resolution: Optional[str] = None
 
-        # [VERSION 1.1] - Hardcoded ASK Failsafe
-        if not explicit_colors and ambiguity != "none" and not speaker.inferred_color():
-            logger.info("[GATE] Failsafe triggered: No explicit colors found and no profile inference")
-            return self._decide_ask(session, speaker_name, "color", classification, explicit_colors, explicit_counts, parsed.start_structure or "")
-            
-        if not explicit_counts and ambiguity != "none" and not speaker.inferred_count():
-            logger.info("[GATE] Failsafe triggered: No explicit counts found and no profile inference")
-            return self._decide_ask(session, speaker_name, "count", classification, explicit_colors, explicit_counts, parsed.start_structure or "")
-
-        if ambiguity == "color":
-            inferred = speaker.inferred_color()
-            if inferred and len(speaker.color_fills) >= 1:
-                resolution = (
-                    f"The unspecified colour should be {inferred} "
-                    f"(based on {speaker_name}'s established pattern: "
-                    f"{speaker.color_fills})."
-                )
-                logger.info("[GATE] Color resolved from profile → %s (pattern: %s)", inferred, speaker.color_fills)
-            elif confidence < 0.6:
-                logger.info("[GATE] Low confidence (%.2f < 0.6), asking for clarification on color", confidence)
-                return self._decide_ask(
-                    session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts, parsed.start_structure or ""
-                )
-            else:
-                logger.info("[GATE] No color pattern established yet, but confidence OK (%.2f)", confidence)
-
-        elif ambiguity == "count":
-            inferred = speaker.inferred_count()
-            if inferred and len(speaker.count_fills) >= 1:
-                resolution = (
-                    f"The unspecified count should be {inferred} "
-                    f"(based on {speaker_name}'s established pattern: "
-                    f"{speaker.count_fills})."
-                )
-                logger.info("[GATE] Count resolved from profile → %d (pattern: %s)", inferred, speaker.count_fills)
-            elif confidence < 0.6:
-                logger.info("[GATE] Low confidence (%.2f < 0.6), asking for clarification on count", confidence)
-                return self._decide_ask(
-                    session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts, parsed.start_structure or ""
-                )
-            else:
-                logger.info("[GATE] No count pattern established yet, but confidence OK (%.2f)", confidence)
+        if ambiguity != "none":
+            logger.info(
+                "[GATE] Ambiguity present ('%s'), asking for clarification",
+                ambiguity
+            )
+            return self._decide_ask(
+                session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts, parsed.start_structure or ""
+            )
 
         # Store pending for feedback-driven profile update
         session.pending = PendingClassification(
@@ -297,7 +264,7 @@ class PurplePipeline:
         if resolution:
             logger.info("[STAGE2] Using resolution: %s", resolution)
         build = await self._stage2_build(
-            instruction=parsed.instruction_text or parsed.raw,
+            instruction=parsed.instruction_text or "",
             start_structure=parsed.start_structure or "",
             resolution=resolution,
         )
@@ -397,7 +364,7 @@ class PurplePipeline:
         for msg in reversed(session.conversation):
             if msg["role"] == "user" and "[TASK_DESCRIPTION]" in msg["content"]:
                 pm = parse_message(msg["content"])
-                return pm.instruction_text or pm.raw, pm.start_structure or ""
+                return pm.instruction_text or "", pm.start_structure or ""
         return None, ""
 
     async def _direct_from_history(self, session: SessionState) -> str:
@@ -428,7 +395,7 @@ class PurplePipeline:
             {"role": "user", "content": user_msg},
         ]
         logger.info("[STAGE1_LLM] Calling LLM for classification...")
-        logger.info("[STAGE1_LLM] User prompt (first 200 chars):\n%s", user_msg[:200])
+        logger.info("[STAGE1_LLM] User prompt:\n%s", user_msg)
         # Only pass reasoning extra_body for models that support it
         _reasoning_models = ("nemotron", "o1", "o3", "deepseek-r1", "v3.2")
         stage1_extra = (
@@ -439,7 +406,7 @@ class PurplePipeline:
         raw = await self._llm_call(
             messages,
             temperature=0.1,
-            max_tokens=512,
+            max_tokens=8192,
             extra_body=stage1_extra,
             model=self._stage1_model,
             client=self._stage1_client,
@@ -447,15 +414,30 @@ class PurplePipeline:
         logger.info("[STAGE1_LLM] Raw response from LLM:\n%s", raw)
 
         try:
-            clean = raw.strip()
-            # Strip <thinking>...</thinking> blocks emitted by reasoning models (e.g. Nemotron)
-            clean = re.sub(r"<thinking>.*?</thinking>", "", clean, flags=re.DOTALL).strip()
+            # Strip <thinking>...</thinking> blocks if the JSON is outside them
+            clean_no_think = re.sub(r"<thinking>.*?</thinking>", "", raw, flags=re.DOTALL).strip()
+            
+            # If there's still a JSON object outside the thinking block, use that part
+            if "{" in clean_no_think:
+                clean = clean_no_think
+            else:
+                clean = raw.strip()
+                
             # Strip markdown code fences
             if clean.startswith("```"):
                 clean = clean.split("\n", 1)[1] if "\n" in clean else clean[3:]
                 if clean.endswith("```"):
                     clean = clean[:-3]
                 clean = clean.strip()
+                if clean.startswith("json\n"):
+                    clean = clean[5:]
+                    
+            # Find outermost braces
+            start_idx = clean.find("{")
+            end_idx = clean.rfind("}")
+            if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                clean = clean[start_idx:end_idx+1]
+            
             result = json.loads(clean)
             logger.info("[STAGE1_LLM] Successfully parsed JSON classification")
             return result
@@ -483,7 +465,7 @@ class PurplePipeline:
             {"role": "user", "content": user_msg},
         ]
         logger.info("[STAGE2_LLM] Calling LLM for coordinate generation...")
-        logger.info("[STAGE2_LLM] User prompt (first 200 chars):\n%s", user_msg[:200])
+        logger.info("[STAGE2_LLM] User prompt:\n%s", user_msg)
         if resolution:
             logger.info("[STAGE2_LLM] Resolution provided: %s", resolution)
         
@@ -497,7 +479,7 @@ class PurplePipeline:
         )
         raw = await self._llm_call(
             messages,
-            max_tokens=2048,
+            max_tokens=8192,
             extra_body=stage2_extra,
         )
         logger.info("[STAGE2_LLM] Raw response from LLM:\n%s", raw)
@@ -617,14 +599,29 @@ class PurplePipeline:
             completion = await _client.chat.completions.create(**params)
             msg = completion.choices[0].message
             content = (msg.content or "").strip()
-            # For reasoning models, content may be empty while the answer is
-            # in reasoning_details — extract from there as fallback.
-            if not content and hasattr(msg, "reasoning_details") and msg.reasoning_details:
+
+            # OpenRouter native reasoning (usually in extra fields)
+            extra = getattr(msg, "model_extra", {}) or {}
+            or_reasoning = extra.get("reasoning")
+            if not or_reasoning:
+                or_reasoning = getattr(msg, "reasoning", "")
+            
+            if or_reasoning:
+                content = f"<thinking>\n{or_reasoning}\n</thinking>\n{content}".strip()
+            
+            # OpenAI native reasoning (o1/o3/etc)
+            elif hasattr(msg, "reasoning_details") and msg.reasoning_details:
+                details_text = ""
                 for detail in msg.reasoning_details:
                     text = getattr(detail, "text", None) or ""
-                    if text.strip():
-                        content = text.strip()
-                        break
+                    details_text += text
+                if details_text.strip():
+                    content = f"<thinking>\n{details_text}\n</thinking>\n{content}".strip()
+            
+            # Fallback if content was completely empty but we found reasoning text
+            if not content and or_reasoning:
+                content = or_reasoning.strip()
+                
             return content
 
         except Exception as exc:

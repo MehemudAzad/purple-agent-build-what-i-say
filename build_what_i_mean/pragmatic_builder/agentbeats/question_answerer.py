@@ -26,7 +26,7 @@ class QuestionAnswerer:
     model: str
     api_key: str
     base_url: Optional[str] = None
-    timeout: float = 30.0
+    timeout: float = 120.0
     temperature: float = 0.2
     max_tokens: int = 256
 
@@ -52,9 +52,9 @@ class QuestionAnswerer:
             return None
         model = os.getenv("GREEN_AGENT_MODEL", "nvidia/nemotron-3-super-120b-a12b:free").strip()
         base_url = os.getenv("OPENAI_BASE_URL", "").strip() or None
-        timeout = float(os.getenv("OPENAI_TIMEOUT", "30"))
+        timeout = float(os.getenv("OPENAI_TIMEOUT", "120"))
         temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.2"))
-        max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "256"))
+        max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "2048"))
         return cls(
             model=model,
             api_key=api_key,
@@ -118,6 +118,18 @@ class QuestionAnswerer:
 
         choice = response.choices[0].message
         raw = choice.content or ""
+        
+        # Handle OpenRouter reasoning tokens natively appended in model_extra
+        or_reasoning = ""
+        if hasattr(choice, "model_extra") and choice.model_extra:
+            or_reasoning = choice.model_extra.get("reasoning", "")
+        # fallback for older SDKs exposing reasoning natively
+        if not or_reasoning and hasattr(choice, "reasoning") and getattr(choice, "reasoning", None):
+            or_reasoning = choice.reasoning
+            
+        if or_reasoning:
+            raw = f"<thinking>\n{or_reasoning}\n</thinking>\n{raw}".strip()
+            
         # Strip <thinking> tags if present
         clean = re.sub(r"<thinking>.*?</thinking>", "", raw, flags=re.DOTALL).strip()
         return clean or raw or "No answer."

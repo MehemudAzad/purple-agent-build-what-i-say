@@ -70,7 +70,7 @@ Purple agent  ←  [BUILD];Color,x,y,z;...  ←───────────
 ## Project structure
 
 ```
-purple_openai/          ← you are here (project root)
+purple_agent/          ← you are here (project root)
 ├── server.py           ← A2A server entry point
 .agentbeats/
     ├── README.md

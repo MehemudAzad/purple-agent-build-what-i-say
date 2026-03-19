@@ -28,8 +28,8 @@ _ANSWER_RE = re.compile(r"^Answer:")
 _INSTRUCTION_RE = re.compile(r"\[TASK_DESCRIPTION\]")
 
 # Extraction helpers
-_SPEAKER_RE = re.compile(r"\[SPEAKER\]\s*(\S+)")
-_START_STRUCT_RE = re.compile(r"\[START_STRUCTURE\]\s*(.*?)(?:\n|$)")
+_SPEAKER_RE = re.compile(r"\[SPEAKER\][ \t]*(\S+)")
+_START_STRUCT_RE = re.compile(r"\[START_STRUCTURE\][ \t]*(.*?)(?:\n|$)")
 
 # Target structure from feedback
 _CORRECT_TARGET_RE = re.compile(r"points\.\s*(.+?)\s*\|")

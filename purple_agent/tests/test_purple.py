@@ -1,6 +1,6 @@
 """Quick smoke tests for validators + state modules."""
 import sys, os
-# Add the purple_openai project root (one level up from tests/) to sys.path
+# Add the purple_agent project root (one level up from tests/) to sys.path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from validators import validate_build_response, validate_block, snap, VALID_XZ, VALID_Y

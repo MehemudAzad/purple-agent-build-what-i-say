@@ -269,7 +269,7 @@ AGENT CODE:
 
 DIRECTORY STRUCTURE:
   /purple-agent/
-    ├── purple_openai/
+    ├── purple_agent/
     │   ├── agent.py (PurplePipeline class)
     │   ├── state.py (StateManager, SessionState, SpeakerProfile)
     │   ├── prompts.py (System/user prompts for Stage 1 & 2)
@@ -411,7 +411,7 @@ PURPLE AGENT PROCESSING:
 ================================================================================
 
 AGENT ORCHESTRATION:
-  File: purple_openai/agent.py
+  File: purple_agent/agent.py
   Class: PurplePipeline
   Key Methods:
     - __init__(): Initialize async client, state manager
@@ -424,7 +424,7 @@ AGENT ORCHESTRATION:
     - _find_last_instruction(): Retrieve context
 
 STATE MANAGEMENT:
-  File: purple_openai/state.py
+  File: purple_agent/state.py
   Classes:
     - SessionState: Per-context mutable state
     - SpeakerProfile: Per-speaker learned conventions
@@ -436,7 +436,7 @@ STATE MANAGEMENT:
     - MessageType enum: NEW_TASK, FEEDBACK, ANSWER, INSTRUCTION, UNKNOWN
 
 PROMPTS:
-  File: purple_openai/prompts.py
+  File: purple_agent/prompts.py
   Key Variables:
     - STAGE1_SYSTEM: System prompt for classification
     - STAGE2_SYSTEM: System prompt for coordinate generation
@@ -444,7 +444,7 @@ PROMPTS:
     - stage2_user_prompt(): User message template for Stage 2
 
 VALIDATORS:
-  File: purple_openai/validators.py
+  File: purple_agent/validators.py
   Key Functions:
     - validate_build_response(): Check format and coordinates
     - validate_block(): Check individual coordinate validity
