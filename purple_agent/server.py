@@ -133,6 +133,22 @@ def main() -> None:
 
     logging.basicConfig(level=log_level, format=log_fmt, handlers=handlers, force=True)
 
+    # Silence noisy third-party loggers even in debug mode — we only want
+    # our own agent/server logs at DEBUG level, not a2a framework internals.
+    for noisy in (
+        "a2a",
+        "a2a.server",
+        "a2a.utils",
+        "a2a.client",
+        "httpcore",
+        "httpx",
+        "openai",
+        "uvicorn.access",
+        "uvicorn.error",
+    ):
+        logging.getLogger(noisy).setLevel(logging.WARNING)
+
+
     card_url = args.card_url
     if not card_url:
         card_host = "127.0.0.1" if args.host == "0.0.0.0" else args.host

@@ -1,0 +1,705 @@
+2026-06-24 12:43:00,730 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:44:06,192 INFO agent: [PROFILE] Feedback: INCORRECT | Laura now has 1 incorrect builds
+2026-06-24 12:44:06,192 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (1 turns, 0 correct, 1 incorrect):
+2026-06-24 12:44:10,545 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:44:15,363 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 1 correct builds
+2026-06-24 12:44:15,363 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (2 turns, 1 correct, 1 incorrect):
+2026-06-24 12:44:26,879 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 12:44:26,879 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 12:45:05,367 INFO agent: [ANSWER] Directly learned: Laura color='Red' → convention='same_as_context' (explicit_colors={'Red'})
+2026-06-24 12:45:05,385 INFO agent: [PROFILE] Feedback: INCORRECT | Laura now has 2 incorrect builds
+2026-06-24 12:45:05,385 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:45:05,385 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (3 turns, 1 correct, 2 incorrect):
+2026-06-24 12:45:11,773 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 12:45:11,773 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context'], count_conv=[])
+2026-06-24 12:45:53,152 INFO agent: [ANSWER] Directly learned: Laura color='Red' → convention='same_as_context' (explicit_colors={'Red'})
+2026-06-24 12:45:53,169 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 2 correct builds
+2026-06-24 12:45:53,169 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:45:53,169 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (4 turns, 2 correct, 2 incorrect):
+2026-06-24 12:45:56,811 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:46:05,282 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 3 correct builds
+2026-06-24 12:46:05,282 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (5 turns, 3 correct, 2 incorrect):
+2026-06-24 12:46:25,881 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 12:46:25,881 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'same_as_context'], count_conv=[])
+2026-06-24 12:46:40,922 INFO agent: [ANSWER] Directly learned: Laura color='Red' → convention='same_as_context' (explicit_colors={'Red'})
+2026-06-24 12:46:40,937 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 4 correct builds
+2026-06-24 12:46:40,937 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:46:40,937 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (6 turns, 4 correct, 2 incorrect):
+2026-06-24 12:46:48,450 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 12:46:48,450 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'same_as_context', 'same_as_context'], count_conv=[])
+2026-06-24 12:47:10,032 INFO agent: [ANSWER] Directly learned: Laura count=3 → convention='same_as_context' (explicit_counts={'Purple': 4, 'Blue': 3})
+2026-06-24 12:47:10,051 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 5 correct builds
+2026-06-24 12:47:10,051 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:47:10,051 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (7 turns, 5 correct, 2 incorrect):
+2026-06-24 12:47:13,896 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:47:40,888 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 6 correct builds
+2026-06-24 12:47:40,888 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (8 turns, 6 correct, 2 incorrect):
+2026-06-24 12:47:46,723 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 12:47:46,723 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'same_as_context', 'same_as_context'], count_conv=['same_as_context'])
+2026-06-24 12:47:59,601 INFO agent: [ANSWER] Directly learned: Laura count=3 → convention='same_as_context' (explicit_counts={'Green': 3})
+2026-06-24 12:47:59,619 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 7 correct builds
+2026-06-24 12:47:59,619 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:47:59,619 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (9 turns, 7 correct, 2 incorrect):
+2026-06-24 12:48:03,854 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 12:48:03,854 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'same_as_context', 'same_as_context'], count_conv=['same_as_context', 'same_as_context'])
+2026-06-24 12:48:18,077 INFO agent: [ANSWER] Directly learned: Laura count=4 → convention='same_as_context' (explicit_counts={'Green': 4})
+2026-06-24 12:48:18,098 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 8 correct builds
+2026-06-24 12:48:18,098 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:48:18,098 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (10 turns, 8 correct, 2 incorrect):
+2026-06-24 12:48:23,684 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:48:38,096 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 9 correct builds
+2026-06-24 12:48:38,096 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (11 turns, 9 correct, 2 incorrect):
+2026-06-24 12:48:50,015 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 12:48:50,015 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 1 (from 3 observations, context counts={'Green': 1, 'Red': 3})
+2026-06-24 12:49:08,907 INFO agent: [PROFILE] Feedback: INCORRECT | Laura now has 3 incorrect builds
+2026-06-24 12:49:08,907 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=False) — learning from target: Green,0,50,0;Green,0,150,0;Red,-100,50,0;Red,-100,150,0;Red,-100,250,0;Yellow,-200,50,0;Yellow,-200,
+2026-06-24 12:49:08,907 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (12 turns, 9 correct, 3 incorrect):
+2026-06-24 12:49:14,480 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 12:49:14,480 INFO agent: [GATE] Resolved 'color' via convention='same_as_context' → Green (from 3 observations, context colors=['Green'])
+2026-06-24 12:49:34,746 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 10 correct builds
+2026-06-24 12:49:34,746 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Green,0,50,0;Green,0,150,0;Green,-100,50,0;Green,-100,150,0;Green,-100,250,0
+2026-06-24 12:49:34,747 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (13 turns, 10 correct, 3 incorrect):
+2026-06-24 12:50:00,876 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:50:41,869 INFO agent: [PROFILE] Feedback: INCORRECT | Laura now has 4 incorrect builds
+2026-06-24 12:50:41,869 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (14 turns, 10 correct, 4 incorrect):
+2026-06-24 12:50:47,172 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:50:59,908 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 11 correct builds
+2026-06-24 12:50:59,909 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (15 turns, 11 correct, 4 incorrect):
+2026-06-24 12:51:03,679 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 12:51:03,679 INFO agent: [GATE] Resolved 'color' via convention='same_as_context' → Blue (from 4 observations, context colors=['Blue'])
+2026-06-24 12:51:13,152 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 12 correct builds
+2026-06-24 12:51:13,152 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Blue,-100,50,0;Blue,-100,150,0;Blue,-100,250,0;Blue,-200,50,0;Blue,-200,150,0;Blue,-200,250,0;Blue,-
+2026-06-24 12:51:13,153 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (16 turns, 12 correct, 4 incorrect):
+2026-06-24 12:51:19,369 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:51:43,396 INFO agent: [PROFILE] Feedback: INCORRECT | Laura now has 5 incorrect builds
+2026-06-24 12:51:43,396 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (17 turns, 12 correct, 5 incorrect):
+2026-06-24 12:52:12,009 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:52:25,433 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 13 correct builds
+2026-06-24 12:52:25,433 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (18 turns, 13 correct, 5 incorrect):
+2026-06-24 12:52:31,386 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:53:18,106 INFO agent: [PROFILE] Feedback: CORRECT | Laura now has 14 correct builds
+2026-06-24 12:53:18,106 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (19 turns, 14 correct, 5 incorrect):
+2026-06-24 12:53:27,418 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:53:43,335 INFO agent: [PROFILE] Feedback: INCORRECT | Laura now has 6 incorrect builds
+2026-06-24 12:53:43,335 INFO agent: [PROFILE] Updated speaker 'Laura': Speaker 'Laura' (20 turns, 14 correct, 6 incorrect):
+2026-06-24 12:53:49,059 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:54:12,510 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 1 correct builds
+2026-06-24 12:54:12,510 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (1 turns, 1 correct, 0 incorrect):
+2026-06-24 12:54:17,235 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:54:22,961 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 2 correct builds
+2026-06-24 12:54:22,961 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (2 turns, 2 correct, 0 incorrect):
+2026-06-24 12:54:42,874 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 12:54:42,874 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 12:55:06,721 INFO agent: [ANSWER] Directly learned: Clara color='Blue' → convention='different' (explicit_colors={'Red'})
+2026-06-24 12:55:06,738 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 3 correct builds
+2026-06-24 12:55:06,738 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:55:06,738 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (3 turns, 3 correct, 0 incorrect):
+2026-06-24 12:55:07,363 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:55:19,035 INFO agent: [PROFILE] Feedback: INCORRECT | Clara now has 1 incorrect builds
+2026-06-24 12:55:19,036 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (4 turns, 3 correct, 1 incorrect):
+2026-06-24 12:55:32,150 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 12:58:45,351 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 4 correct builds
+2026-06-24 12:58:45,351 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (5 turns, 4 correct, 1 incorrect):
+2026-06-24 12:58:52,003 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 12:58:52,003 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different'], count_conv=[])
+2026-06-24 12:59:41,333 INFO agent: [ANSWER] Directly learned: Clara count=2 → convention='different' (explicit_counts={'Yellow': 3})
+2026-06-24 12:59:41,352 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 5 correct builds
+2026-06-24 12:59:41,352 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:59:41,352 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (6 turns, 5 correct, 1 incorrect):
+2026-06-24 12:59:47,461 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 12:59:47,461 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different'], count_conv=['different'])
+2026-06-24 12:59:57,267 INFO agent: [ANSWER] Directly learned: Clara color='Yellow' → convention='different' (explicit_colors={'Purple'})
+2026-06-24 12:59:57,287 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 6 correct builds
+2026-06-24 12:59:57,287 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 12:59:57,287 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (7 turns, 6 correct, 1 incorrect):
+2026-06-24 13:00:00,774 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:00:27,820 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 7 correct builds
+2026-06-24 13:00:27,820 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (8 turns, 7 correct, 1 incorrect):
+2026-06-24 13:00:35,845 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:00:35,845 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'different'], count_conv=['different'])
+2026-06-24 13:00:47,589 INFO agent: [ANSWER] Directly learned: Clara color='Blue' → convention='same_as_context' (explicit_colors={'Blue'})
+2026-06-24 13:00:47,608 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 8 correct builds
+2026-06-24 13:00:47,608 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:00:47,608 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (9 turns, 8 correct, 1 incorrect):
+2026-06-24 13:00:56,031 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:00:56,031 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'different', 'same_as_context'], count_conv=['different'])
+2026-06-24 13:07:02,716 INFO agent: [ANSWER] Directly learned: Clara color='Purple' → convention='different' (explicit_colors={'Yellow'})
+2026-06-24 13:07:02,747 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 9 correct builds
+2026-06-24 13:07:02,747 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:07:02,747 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (10 turns, 9 correct, 1 incorrect):
+2026-06-24 13:07:15,986 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:07:15,986 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different'], count_conv=['different'])
+2026-06-24 13:07:37,654 INFO agent: [ANSWER] Directly learned: Clara count=3 → convention='same_as_context' (explicit_counts={'Red': 3})
+2026-06-24 13:07:37,674 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 10 correct builds
+2026-06-24 13:07:37,674 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:07:37,674 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (11 turns, 10 correct, 1 incorrect):
+2026-06-24 13:07:41,343 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:07:54,022 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 11 correct builds
+2026-06-24 13:07:54,022 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (12 turns, 11 correct, 1 incorrect):
+2026-06-24 13:08:04,982 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:08:04,982 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different'], count_conv=['different', 'same_as_context'])
+2026-06-24 13:08:15,937 INFO agent: [ANSWER] Directly learned: Clara count=2 → convention='different' (explicit_counts={'Green': 3, 'Blue': 3})
+2026-06-24 13:08:15,956 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 12 correct builds
+2026-06-24 13:08:15,956 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:08:15,956 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (13 turns, 12 correct, 1 incorrect):
+2026-06-24 13:08:19,337 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:08:31,064 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 13 correct builds
+2026-06-24 13:08:31,064 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (14 turns, 13 correct, 1 incorrect):
+2026-06-24 13:08:45,428 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:08:45,428 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different'], count_conv=['different', 'same_as_context', 'different'])
+2026-06-24 13:09:45,741 INFO agent: [ANSWER] Directly learned: Clara color='Blue' → convention='different' (explicit_colors={'Purple'})
+2026-06-24 13:09:45,761 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 14 correct builds
+2026-06-24 13:09:45,761 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:09:45,761 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (15 turns, 14 correct, 1 incorrect):
+2026-06-24 13:10:04,709 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:10:15,763 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 15 correct builds
+2026-06-24 13:10:15,764 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (16 turns, 15 correct, 1 incorrect):
+2026-06-24 13:10:20,268 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:10:20,268 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different', 'different'], count_conv=['different', 'same_as_context', 'different'])
+2026-06-24 13:10:41,538 INFO agent: [ANSWER] Directly learned: Clara count=2 → convention='different' (explicit_counts={'Yellow': 3})
+2026-06-24 13:10:41,557 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 16 correct builds
+2026-06-24 13:10:41,557 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:10:41,557 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (17 turns, 16 correct, 1 incorrect):
+2026-06-24 13:14:16,166 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:14:36,182 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 17 correct builds
+2026-06-24 13:14:36,182 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (18 turns, 17 correct, 1 incorrect):
+2026-06-24 13:14:39,875 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:14:39,875 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different', 'different'], count_conv=['different', 'same_as_context', 'different', 'different'])
+2026-06-24 13:15:34,377 INFO agent: [ANSWER] Directly learned: Clara count=2 → convention='same_as_context' (explicit_counts={'Yellow': 2, 'Green': 2})
+2026-06-24 13:15:34,397 INFO agent: [PROFILE] Feedback: CORRECT | Clara now has 18 correct builds
+2026-06-24 13:15:34,397 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:15:34,397 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (19 turns, 18 correct, 1 incorrect):
+2026-06-24 13:15:40,217 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:16:01,612 INFO agent: [PROFILE] Feedback: INCORRECT | Clara now has 2 incorrect builds
+2026-06-24 13:16:01,613 INFO agent: [PROFILE] Updated speaker 'Clara': Speaker 'Clara' (20 turns, 18 correct, 2 incorrect):
+2026-06-24 13:16:05,171 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:17:15,915 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 1 correct builds
+2026-06-24 13:17:15,915 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (1 turns, 1 correct, 0 incorrect):
+2026-06-24 13:17:23,306 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:17:48,388 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 2 correct builds
+2026-06-24 13:17:48,388 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (2 turns, 2 correct, 0 incorrect):
+2026-06-24 13:18:00,974 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:18:00,974 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 13:18:22,155 INFO agent: [ANSWER] Directly learned: Emma count=4 → convention='different' (explicit_counts={'Green': 1, 'Red': 3})
+2026-06-24 13:18:22,173 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 3 correct builds
+2026-06-24 13:18:22,173 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:18:22,173 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (3 turns, 3 correct, 0 incorrect):
+2026-06-24 13:18:57,776 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:18:57,776 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=['different'])
+2026-06-24 13:19:06,037 INFO agent: [ANSWER] Directly learned: Emma color='Red' → convention='same_as_context' (explicit_colors={'Red'})
+2026-06-24 13:19:06,056 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 4 correct builds
+2026-06-24 13:19:06,056 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:19:06,056 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (4 turns, 4 correct, 0 incorrect):
+2026-06-24 13:19:23,434 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:19:32,242 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 5 correct builds
+2026-06-24 13:19:32,242 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (5 turns, 5 correct, 0 incorrect):
+2026-06-24 13:19:45,391 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:19:45,391 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context'], count_conv=['different'])
+2026-06-24 13:19:57,087 INFO agent: [ANSWER] Directly learned: Emma color='Red' → convention='different' (explicit_colors={'Blue'})
+2026-06-24 13:19:57,105 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 6 correct builds
+2026-06-24 13:19:57,105 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:19:57,106 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (6 turns, 6 correct, 0 incorrect):
+2026-06-24 13:20:10,843 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:20:10,843 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'different'], count_conv=['different'])
+2026-06-24 13:20:26,226 INFO agent: [ANSWER] Directly learned: Emma count=3 → convention='different' (explicit_counts={'Purple': 2, 'Yellow': 2})
+2026-06-24 13:20:26,245 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 7 correct builds
+2026-06-24 13:20:26,245 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:20:26,245 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (7 turns, 7 correct, 0 incorrect):
+2026-06-24 13:20:48,740 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:21:20,423 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 8 correct builds
+2026-06-24 13:21:20,423 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (8 turns, 8 correct, 0 incorrect):
+2026-06-24 13:21:26,487 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:21:26,487 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'different'], count_conv=['different', 'different'])
+2026-06-24 13:21:41,536 INFO agent: [ANSWER] Directly learned: Emma color='Green' → convention='same_as_context' (explicit_colors={'Green'})
+2026-06-24 13:21:41,554 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 9 correct builds
+2026-06-24 13:21:41,554 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:21:41,554 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (9 turns, 9 correct, 0 incorrect):
+2026-06-24 13:21:53,445 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:21:53,445 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'different', 'same_as_context'], count_conv=['different', 'different'])
+2026-06-24 13:22:12,477 INFO agent: [ANSWER] Directly learned: Emma color='Yellow' → convention='different' (explicit_colors={'Red'})
+2026-06-24 13:22:12,496 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 10 correct builds
+2026-06-24 13:22:12,496 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:22:12,496 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (10 turns, 10 correct, 0 incorrect):
+2026-06-24 13:22:30,762 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:22:30,762 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'different', 'same_as_context', 'different'], count_conv=['different', 'different'])
+2026-06-24 13:22:57,791 INFO agent: [ANSWER] Directly learned: Emma color='Purple' → convention='same_as_context' (explicit_colors={'Purple'})
+2026-06-24 13:22:57,809 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 11 correct builds
+2026-06-24 13:22:57,809 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:22:57,810 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (11 turns, 11 correct, 0 incorrect):
+2026-06-24 13:23:05,275 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:24:01,038 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 12 correct builds
+2026-06-24 13:24:01,038 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (12 turns, 12 correct, 0 incorrect):
+2026-06-24 13:24:11,014 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:24:11,014 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'different', 'same_as_context', 'different', 'same_as_context'], count_conv=['different', 'different'])
+2026-06-24 13:24:21,781 INFO agent: [ANSWER] Directly learned: Emma count=2 → convention='different' (explicit_counts={'Blue': 3})
+2026-06-24 13:24:21,800 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 13 correct builds
+2026-06-24 13:24:21,800 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:24:21,800 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (13 turns, 13 correct, 0 incorrect):
+2026-06-24 13:24:24,865 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:24:39,754 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 14 correct builds
+2026-06-24 13:24:39,754 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (14 turns, 14 correct, 0 incorrect):
+2026-06-24 13:24:46,777 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:24:46,777 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'different', 'same_as_context', 'different', 'same_as_context'], count_conv=['different', 'different', 'different'])
+2026-06-24 13:25:02,019 INFO agent: [ANSWER] Directly learned: Emma count=3 → convention='different' (explicit_counts={'green': 4})
+2026-06-24 13:25:02,039 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 15 correct builds
+2026-06-24 13:25:02,039 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:25:02,039 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (15 turns, 15 correct, 0 incorrect):
+2026-06-24 13:25:06,186 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:25:40,817 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 16 correct builds
+2026-06-24 13:25:40,817 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (16 turns, 16 correct, 0 incorrect):
+2026-06-24 13:25:50,367 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:25:50,368 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'different', 'same_as_context', 'different', 'same_as_context'], count_conv=['different', 'different', 'different', 'different'])
+2026-06-24 13:26:01,849 INFO agent: [ANSWER] Directly learned: Emma count=4 → convention='different' (explicit_counts={'Purple': 3})
+2026-06-24 13:26:01,867 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 17 correct builds
+2026-06-24 13:26:01,867 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:26:01,867 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (17 turns, 17 correct, 0 incorrect):
+2026-06-24 13:26:05,126 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:26:17,041 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 18 correct builds
+2026-06-24 13:26:17,041 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (18 turns, 18 correct, 0 incorrect):
+2026-06-24 13:26:20,704 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:26:20,704 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'different', 'same_as_context', 'different', 'same_as_context'], count_conv=['different', 'different', 'different', 'different', 'different'])
+2026-06-24 13:26:32,261 INFO agent: [ANSWER] Directly learned: Emma count=3 → convention='same_as_context' (explicit_counts={'Green': 3})
+2026-06-24 13:26:32,280 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 19 correct builds
+2026-06-24 13:26:32,280 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:26:32,280 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (19 turns, 19 correct, 0 incorrect):
+2026-06-24 13:26:38,458 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:26:38,458 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'different', 'same_as_context', 'different', 'same_as_context'], count_conv=['different', 'different', 'different', 'different', 'different', 'same_as_context'])
+2026-06-24 13:27:42,866 INFO agent: [ANSWER] Directly learned: Emma color='Blue' → convention='different' (explicit_colors={'Red'})
+2026-06-24 13:27:42,885 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 20 correct builds
+2026-06-24 13:27:42,885 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:27:42,885 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (20 turns, 20 correct, 0 incorrect):
+2026-06-24 13:27:56,639 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:28:18,398 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 1 correct builds
+2026-06-24 13:28:18,398 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (1 turns, 1 correct, 0 incorrect):
+2026-06-24 13:28:22,972 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:28:33,613 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 2 correct builds
+2026-06-24 13:28:33,613 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (2 turns, 2 correct, 0 incorrect):
+2026-06-24 13:28:51,879 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:28:51,879 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 13:29:23,043 INFO agent: [ANSWER] Directly learned: Lena color='Blue' → convention='same_as_context' (explicit_colors={'Blue'})
+2026-06-24 13:29:23,061 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 3 correct builds
+2026-06-24 13:29:23,061 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:29:23,061 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (3 turns, 3 correct, 0 incorrect):
+2026-06-24 13:29:43,489 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:29:43,489 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context'], count_conv=[])
+2026-06-24 13:31:39,532 INFO agent: [ANSWER] Directly learned: Lena count=3 → convention='same_as_context' (explicit_counts={'Yellow': 3})
+2026-06-24 13:31:39,559 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 4 correct builds
+2026-06-24 13:31:39,559 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:31:39,559 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (4 turns, 4 correct, 0 incorrect):
+2026-06-24 13:31:52,750 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:31:52,750 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context'], count_conv=['same_as_context'])
+2026-06-24 13:32:25,236 INFO agent: [ANSWER] Directly learned: Lena count=2 → convention='same_as_context' (explicit_counts={'Green': 2})
+2026-06-24 13:32:25,256 INFO agent: [PROFILE] Feedback: INCORRECT | Lena now has 1 incorrect builds
+2026-06-24 13:32:25,256 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:32:25,256 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (5 turns, 4 correct, 1 incorrect):
+2026-06-24 13:32:29,248 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:32:29,248 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context'], count_conv=['same_as_context', 'same_as_context'])
+2026-06-24 13:33:30,886 INFO agent: [ANSWER] Directly learned: Lena count=3 → convention='same_as_context' (explicit_counts={'Green': 3})
+2026-06-24 13:33:30,899 INFO agent: [PROFILE] Feedback: INCORRECT | Lena now has 2 incorrect builds
+2026-06-24 13:33:30,899 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:33:30,899 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (6 turns, 4 correct, 2 incorrect):
+2026-06-24 13:33:37,652 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:33:37,652 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context'], count_conv=['same_as_context', 'same_as_context', 'same_as_context'])
+2026-06-24 13:33:45,664 INFO agent: [ANSWER] Directly learned: Lena color='Blue' → convention='same_as_context' (explicit_colors={'Blue'})
+2026-06-24 13:33:45,683 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 5 correct builds
+2026-06-24 13:33:45,683 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:33:45,683 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (7 turns, 5 correct, 2 incorrect):
+2026-06-24 13:34:05,363 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:35:27,316 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 6 correct builds
+2026-06-24 13:35:27,316 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (8 turns, 6 correct, 2 incorrect):
+2026-06-24 13:35:36,081 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:35:36,081 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'same_as_context'], count_conv=['same_as_context', 'same_as_context', 'same_as_context'])
+2026-06-24 13:36:05,266 INFO agent: [ANSWER] Directly learned: Lena color='Red' → convention='same_as_context' (explicit_colors={'Red', 'Yellow'})
+2026-06-24 13:36:05,286 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 7 correct builds
+2026-06-24 13:36:05,286 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 13:36:05,286 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (9 turns, 7 correct, 2 incorrect):
+2026-06-24 13:36:11,264 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:36:23,552 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 8 correct builds
+2026-06-24 13:36:23,552 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (10 turns, 8 correct, 2 incorrect):
+2026-06-24 13:42:26,887 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:42:35,532 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 9 correct builds
+2026-06-24 13:42:35,533 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (11 turns, 9 correct, 2 incorrect):
+2026-06-24 13:42:43,056 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:42:43,056 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 3 (from 3 observations, context counts={'Yellow': 3})
+2026-06-24 13:42:53,843 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 10 correct builds
+2026-06-24 13:42:53,843 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Purple,0,50,0;Purple,0,150,0;Purple,0,250,0;Yellow,-100,50,0;Yellow,-100,150,0;Blue,-100,50,100;Blue
+2026-06-24 13:42:53,843 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (12 turns, 10 correct, 2 incorrect):
+2026-06-24 13:42:58,692 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:42:58,692 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 3 (from 4 observations, context counts={'Green': 3, 'Blue': 3})
+2026-06-24 13:43:26,231 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 11 correct builds
+2026-06-24 13:43:26,231 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Green,0,50,0;Green,100,50,0;Green,200,50,0;Blue,300,50,0;Blue,300,150,0;Blue,300,250,0;Red,400,50,0;
+2026-06-24 13:43:26,231 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (13 turns, 11 correct, 2 incorrect):
+2026-06-24 13:43:33,812 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:43:49,707 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 12 correct builds
+2026-06-24 13:43:49,707 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (14 turns, 12 correct, 2 incorrect):
+2026-06-24 13:43:53,510 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:44:05,501 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 13 correct builds
+2026-06-24 13:44:05,501 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (15 turns, 13 correct, 2 incorrect):
+2026-06-24 13:44:16,804 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:44:16,804 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 3 (from 5 observations, context counts={'Red': 3})
+2026-06-24 13:44:44,157 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 14 correct builds
+2026-06-24 13:44:44,157 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Blue,0,50,0;Blue,-100,50,0;Blue,100,50,0;Red,100,50,-100;Red,100,150,-100;Red,100,250,-100;Yellow,20
+2026-06-24 13:44:44,157 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (16 turns, 14 correct, 2 incorrect):
+2026-06-24 13:44:48,237 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 13:44:48,237 INFO agent: [GATE] Resolved 'color' via convention='same_as_context' → Purple (from 3 observations, context colors=['Purple'])
+2026-06-24 13:45:04,541 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 15 correct builds
+2026-06-24 13:45:04,541 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Purple,0,50,0;Purple,0,150,0;Purple,0,250,0;Purple,0,350,0;Purple,0,450,0;Purple,0,50,100;Purple,0,1
+2026-06-24 13:45:04,541 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (17 turns, 15 correct, 2 incorrect):
+2026-06-24 13:45:08,459 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:45:27,457 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 16 correct builds
+2026-06-24 13:45:27,457 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (18 turns, 16 correct, 2 incorrect):
+2026-06-24 13:45:32,158 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 13:45:32,158 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 2 (from 6 observations, context counts={'Yellow': 2, 'Green': 2})
+2026-06-24 13:45:42,118 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 17 correct builds
+2026-06-24 13:45:42,118 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Yellow,0,50,0;Yellow,0,150,0;Green,0,50,100;Green,0,150,100;Red,0,50,200;Red,0,150,200
+2026-06-24 13:45:42,118 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (19 turns, 17 correct, 2 incorrect):
+2026-06-24 13:45:49,751 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:50:16,185 INFO agent: [PROFILE] Feedback: CORRECT | Lena now has 18 correct builds
+2026-06-24 13:50:16,185 INFO agent: [PROFILE] Updated speaker 'Lena': Speaker 'Lena' (20 turns, 18 correct, 2 incorrect):
+2026-06-24 13:50:46,321 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 13:56:15,146 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 1 correct builds
+2026-06-24 13:56:15,146 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (1 turns, 1 correct, 0 incorrect):
+2026-06-24 13:56:24,807 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:02:21,159 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 2 correct builds
+2026-06-24 14:02:21,159 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (2 turns, 2 correct, 0 incorrect):
+2026-06-24 14:02:40,837 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:02:40,837 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 14:03:07,604 INFO agent: [ANSWER] Directly learned: Anna color='Red' → convention='same_as_context' (explicit_colors={'Red', 'Yellow'})
+2026-06-24 14:03:07,624 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 3 correct builds
+2026-06-24 14:03:07,624 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:03:07,624 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (3 turns, 3 correct, 0 incorrect):
+2026-06-24 14:03:15,889 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:03:15,889 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context'], count_conv=[])
+2026-06-24 14:03:27,729 INFO agent: [ANSWER] Directly learned: Anna count=3 → convention='same_as_context' (explicit_counts={'Green': 3, 'Blue': 3})
+2026-06-24 14:03:27,748 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 4 correct builds
+2026-06-24 14:03:27,748 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:03:27,748 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (4 turns, 4 correct, 0 incorrect):
+2026-06-24 14:03:39,344 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:04:04,350 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 5 correct builds
+2026-06-24 14:04:04,350 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (5 turns, 5 correct, 0 incorrect):
+2026-06-24 14:04:13,117 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:04:13,117 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context'], count_conv=['same_as_context'])
+2026-06-24 14:04:30,986 INFO agent: [ANSWER] Directly learned: Anna color='Purple' → convention='same_as_context' (explicit_colors={'Purple'})
+2026-06-24 14:04:31,006 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 6 correct builds
+2026-06-24 14:04:31,007 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:04:31,007 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (6 turns, 6 correct, 0 incorrect):
+2026-06-24 14:04:35,695 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:04:35,695 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'same_as_context'], count_conv=['same_as_context'])
+2026-06-24 14:04:47,807 INFO agent: [ANSWER] Directly learned: Anna color='Blue' → convention='same_as_context' (explicit_colors={'Blue'})
+2026-06-24 14:04:47,825 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 7 correct builds
+2026-06-24 14:04:47,826 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:04:47,826 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (7 turns, 7 correct, 0 incorrect):
+2026-06-24 14:04:51,579 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:05:01,441 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 8 correct builds
+2026-06-24 14:05:01,441 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (8 turns, 8 correct, 0 incorrect):
+2026-06-24 14:05:11,261 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:05:11,261 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'same_as_context', 'same_as_context'], count_conv=['same_as_context'])
+2026-06-24 14:06:42,372 INFO agent: [ANSWER] Directly learned: Anna count=3 → convention='same_as_context' (explicit_counts={'Yellow': 3})
+2026-06-24 14:06:42,404 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 9 correct builds
+2026-06-24 14:06:42,404 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:06:42,404 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (9 turns, 9 correct, 0 incorrect):
+2026-06-24 14:06:49,150 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:07:19,190 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 10 correct builds
+2026-06-24 14:07:19,191 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (10 turns, 10 correct, 0 incorrect):
+2026-06-24 14:07:42,534 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:07:42,534 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'same_as_context', 'same_as_context'], count_conv=['same_as_context', 'same_as_context'])
+2026-06-24 14:09:07,340 INFO agent: [ANSWER] Directly learned: Anna count=2 → convention='same_as_context' (explicit_counts={'Green': 2})
+2026-06-24 14:09:07,379 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 11 correct builds
+2026-06-24 14:09:07,379 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:09:07,379 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (11 turns, 11 correct, 0 incorrect):
+2026-06-24 14:09:13,132 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:09:13,132 INFO agent: [GATE] Resolved 'color' via convention='same_as_context' → Yellow (from 3 observations, context colors=['Yellow'])
+2026-06-24 14:09:41,720 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 12 correct builds
+2026-06-24 14:09:41,720 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Yellow,0,50,0;Yellow,-100,50,0;Yellow,-200,50,0;Yellow,-200,150,0;Yellow,-200,250,0
+2026-06-24 14:09:41,721 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (12 turns, 12 correct, 0 incorrect):
+2026-06-24 14:17:29,660 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:17:46,206 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 13 correct builds
+2026-06-24 14:17:46,206 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (13 turns, 13 correct, 0 incorrect):
+2026-06-24 14:17:55,161 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:17:55,161 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 3 (from 3 observations, context counts={'Red': 3})
+2026-06-24 14:18:27,947 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 14 correct builds
+2026-06-24 14:18:27,947 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Blue,0,50,0;Blue,-100,50,0;Blue,100,50,0;Red,100,50,-100;Red,100,150,-100;Red,100,250,-100;Yellow,20
+2026-06-24 14:18:27,948 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (14 turns, 14 correct, 0 incorrect):
+2026-06-24 14:18:39,951 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:18:54,206 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 15 correct builds
+2026-06-24 14:18:54,206 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (15 turns, 15 correct, 0 incorrect):
+2026-06-24 14:19:04,463 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:19:34,782 INFO agent: [PROFILE] Feedback: INCORRECT | Anna now has 1 incorrect builds
+2026-06-24 14:19:34,782 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (16 turns, 15 correct, 1 incorrect):
+2026-06-24 14:19:41,015 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:19:41,015 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 3 (from 4 observations, context counts={'Green': 3})
+2026-06-24 14:20:07,441 INFO agent: [PROFILE] Feedback: INCORRECT | Anna now has 2 incorrect builds
+2026-06-24 14:20:07,441 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=False) — learning from target: Green,0,50,0;Green,0,50,-100;Green,0,150,-100;Green,0,250,-100;Yellow,100,50,-100;Yellow,100,150,-10
+2026-06-24 14:20:07,441 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (17 turns, 15 correct, 2 incorrect):
+2026-06-24 14:20:12,179 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:20:24,520 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 16 correct builds
+2026-06-24 14:20:24,520 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (18 turns, 16 correct, 2 incorrect):
+2026-06-24 14:20:28,867 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:20:43,270 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 17 correct builds
+2026-06-24 14:20:43,270 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (19 turns, 17 correct, 2 incorrect):
+2026-06-24 14:21:01,261 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:21:09,774 INFO agent: [PROFILE] Feedback: CORRECT | Anna now has 18 correct builds
+2026-06-24 14:21:09,774 INFO agent: [PROFILE] Updated speaker 'Anna': Speaker 'Anna' (20 turns, 18 correct, 2 incorrect):
+2026-06-24 14:21:15,069 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:21:43,082 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 1 correct builds
+2026-06-24 14:21:43,082 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (1 turns, 1 correct, 0 incorrect):
+2026-06-24 14:21:46,588 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:22:32,432 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 2 correct builds
+2026-06-24 14:22:32,432 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (2 turns, 2 correct, 0 incorrect):
+2026-06-24 14:22:42,207 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:22:54,040 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 3 correct builds
+2026-06-24 14:22:54,040 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (3 turns, 3 correct, 0 incorrect):
+2026-06-24 14:23:15,098 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:23:15,098 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 14:23:55,995 INFO agent: [ANSWER] Directly learned: Emma count=4 → convention='same_as_context' (explicit_counts={'Green': 4})
+2026-06-24 14:23:56,012 INFO agent: [PROFILE] Feedback: INCORRECT | Emma now has 1 incorrect builds
+2026-06-24 14:23:56,012 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:23:56,012 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (4 turns, 3 correct, 1 incorrect):
+2026-06-24 14:24:27,487 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:24:34,273 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 4 correct builds
+2026-06-24 14:24:34,273 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (5 turns, 4 correct, 1 incorrect):
+2026-06-24 14:24:41,603 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:24:41,604 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=['same_as_context'])
+2026-06-24 14:24:52,565 INFO agent: [ANSWER] Directly learned: Emma color='Yellow' → convention='different' (explicit_colors={'Red'})
+2026-06-24 14:24:52,582 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 5 correct builds
+2026-06-24 14:24:52,582 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:24:52,582 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (6 turns, 5 correct, 1 incorrect):
+2026-06-24 14:24:57,014 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:24:57,014 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different'], count_conv=['same_as_context'])
+2026-06-24 14:25:24,403 INFO agent: [ANSWER] Directly learned: Emma color='Red' → convention='different' (explicit_colors={'Blue'})
+2026-06-24 14:25:24,423 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 6 correct builds
+2026-06-24 14:25:24,423 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:25:24,423 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (7 turns, 6 correct, 1 incorrect):
+2026-06-24 14:25:29,822 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:25:44,634 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 7 correct builds
+2026-06-24 14:25:44,634 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (8 turns, 7 correct, 1 incorrect):
+2026-06-24 14:25:48,131 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:25:48,131 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different'], count_conv=['same_as_context'])
+2026-06-24 14:25:57,336 INFO agent: [ANSWER] Directly learned: Emma count=3 → convention='same_as_context' (explicit_counts={'Green': 3})
+2026-06-24 14:25:57,355 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 8 correct builds
+2026-06-24 14:25:57,355 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:25:57,355 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (9 turns, 8 correct, 1 incorrect):
+2026-06-24 14:26:03,661 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:26:03,662 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different'], count_conv=['same_as_context', 'same_as_context'])
+2026-06-24 14:26:21,974 INFO agent: [ANSWER] Directly learned: Emma count=4 → convention='different' (explicit_counts={'Purple': 3})
+2026-06-24 14:26:21,992 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 9 correct builds
+2026-06-24 14:26:21,992 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:26:21,992 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (10 turns, 9 correct, 1 incorrect):
+2026-06-24 14:26:26,844 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:26:26,844 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'different'], count_conv=['same_as_context', 'same_as_context', 'different'])
+2026-06-24 14:26:37,601 INFO agent: [ANSWER] Directly learned: Emma color='Green' → convention='same_as_context' (explicit_colors={'Green'})
+2026-06-24 14:26:37,619 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 10 correct builds
+2026-06-24 14:26:37,619 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:26:37,619 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (11 turns, 10 correct, 1 incorrect):
+2026-06-24 14:26:45,169 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:26:59,641 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 11 correct builds
+2026-06-24 14:26:59,641 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (12 turns, 11 correct, 1 incorrect):
+2026-06-24 14:27:07,359 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:27:07,360 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'different', 'same_as_context'], count_conv=['same_as_context', 'same_as_context', 'different'])
+2026-06-24 14:27:50,291 INFO agent: [ANSWER] Directly learned: Emma color='Blue' → convention='different' (explicit_colors={'Red'})
+2026-06-24 14:27:50,320 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 12 correct builds
+2026-06-24 14:27:50,320 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:27:50,320 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (13 turns, 12 correct, 1 incorrect):
+2026-06-24 14:27:54,870 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:35:39,273 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 13 correct builds
+2026-06-24 14:35:39,273 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (14 turns, 13 correct, 1 incorrect):
+2026-06-24 14:35:48,097 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:35:48,097 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different'], count_conv=['same_as_context', 'same_as_context', 'different'])
+2026-06-24 14:36:04,173 INFO agent: [ANSWER] Directly learned: Emma count=4 → convention='different' (explicit_counts={'Green': 1, 'Red': 3})
+2026-06-24 14:36:04,191 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 14 correct builds
+2026-06-24 14:36:04,191 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:36:04,191 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (15 turns, 14 correct, 1 incorrect):
+2026-06-24 14:41:50,723 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:42:01,107 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 15 correct builds
+2026-06-24 14:42:01,107 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (16 turns, 15 correct, 1 incorrect):
+2026-06-24 14:42:09,405 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:42:30,676 INFO agent: [PROFILE] Feedback: INCORRECT | Emma now has 2 incorrect builds
+2026-06-24 14:42:30,676 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (17 turns, 15 correct, 2 incorrect):
+2026-06-24 14:42:34,228 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:42:52,466 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 16 correct builds
+2026-06-24 14:42:52,466 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (18 turns, 16 correct, 2 incorrect):
+2026-06-24 14:43:04,165 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:43:04,166 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different'], count_conv=['same_as_context', 'same_as_context', 'different', 'different'])
+2026-06-24 14:43:19,831 INFO agent: [ANSWER] Directly learned: Emma color='Purple' → convention='same_as_context' (explicit_colors={'Purple'})
+2026-06-24 14:43:19,852 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 17 correct builds
+2026-06-24 14:43:19,852 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:43:19,852 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (19 turns, 17 correct, 2 incorrect):
+2026-06-24 14:43:23,786 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:43:23,786 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'different', 'same_as_context', 'different', 'same_as_context'], count_conv=['same_as_context', 'same_as_context', 'different', 'different'])
+2026-06-24 14:43:35,767 INFO agent: [ANSWER] Directly learned: Emma count=3 → convention='different' (explicit_counts={'Purple': 2, 'Yellow': 2})
+2026-06-24 14:43:35,785 INFO agent: [PROFILE] Feedback: CORRECT | Emma now has 18 correct builds
+2026-06-24 14:43:35,785 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:43:35,785 INFO agent: [PROFILE] Updated speaker 'Emma': Speaker 'Emma' (20 turns, 18 correct, 2 incorrect):
+2026-06-24 14:43:46,497 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:44:01,108 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 1 correct builds
+2026-06-24 14:44:01,108 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (1 turns, 1 correct, 0 incorrect):
+2026-06-24 14:44:05,245 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:44:17,444 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 2 correct builds
+2026-06-24 14:44:17,444 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (2 turns, 2 correct, 0 incorrect):
+2026-06-24 14:44:21,574 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:44:21,575 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 14:44:58,867 INFO agent: [ANSWER] Directly learned: Sarah count=3 → convention='same_as_context' (explicit_counts={'Green': 3})
+2026-06-24 14:44:58,899 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 3 correct builds
+2026-06-24 14:44:58,899 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:44:58,900 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (3 turns, 3 correct, 0 incorrect):
+2026-06-24 14:45:09,680 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:45:09,680 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=['same_as_context'])
+2026-06-24 14:45:32,571 INFO agent: [ANSWER] Directly learned: Sarah color='Red' → convention='same_as_context' (explicit_colors={'Red'})
+2026-06-24 14:45:32,588 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 4 correct builds
+2026-06-24 14:45:32,588 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:45:32,588 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (4 turns, 4 correct, 0 incorrect):
+2026-06-24 14:45:56,533 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:46:26,982 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 5 correct builds
+2026-06-24 14:46:26,982 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (5 turns, 5 correct, 0 incorrect):
+2026-06-24 14:46:49,152 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:46:49,152 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context'], count_conv=['same_as_context'])
+2026-06-24 14:47:17,627 INFO agent: [ANSWER] Directly learned: Sarah color='Purple' → convention='same_as_context' (explicit_colors={'Purple'})
+2026-06-24 14:47:17,644 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 6 correct builds
+2026-06-24 14:47:17,644 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:47:17,644 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (6 turns, 6 correct, 0 incorrect):
+2026-06-24 14:47:27,494 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:47:27,494 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['same_as_context', 'same_as_context'], count_conv=['same_as_context'])
+2026-06-24 14:47:40,629 INFO agent: [ANSWER] Directly learned: Sarah color='Blue' → convention='same_as_context' (explicit_colors={'Blue'})
+2026-06-24 14:47:40,648 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 7 correct builds
+2026-06-24 14:47:40,648 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:47:40,648 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (7 turns, 7 correct, 0 incorrect):
+2026-06-24 14:47:43,836 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:47:56,573 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 8 correct builds
+2026-06-24 14:47:56,573 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (8 turns, 8 correct, 0 incorrect):
+2026-06-24 14:48:03,719 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:48:03,719 INFO agent: [GATE] Resolved 'color' via convention='same_as_context' → Green (from 3 observations, context colors=['Green'])
+2026-06-24 14:48:14,492 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 9 correct builds
+2026-06-24 14:48:14,492 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Green,0,50,0;Green,0,150,0;Green,-100,50,0;Green,-100,150,0;Green,-100,250,0
+2026-06-24 14:48:14,492 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (9 turns, 9 correct, 0 incorrect):
+2026-06-24 14:48:32,367 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:48:44,376 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 10 correct builds
+2026-06-24 14:48:44,376 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (10 turns, 10 correct, 0 incorrect):
+2026-06-24 14:48:49,883 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:48:55,542 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 11 correct builds
+2026-06-24 14:48:55,542 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (11 turns, 11 correct, 0 incorrect):
+2026-06-24 14:49:01,466 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:49:01,466 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'same_as_context', 'same_as_context', 'same_as_context'], count_conv=['same_as_context'])
+2026-06-24 14:49:18,415 INFO agent: [ANSWER] Directly learned: Sarah count=4 → convention='same_as_context' (explicit_counts={'green': 4})
+2026-06-24 14:49:18,566 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 12 correct builds
+2026-06-24 14:49:18,567 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:49:18,568 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (12 turns, 12 correct, 0 incorrect):
+2026-06-24 14:49:24,220 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:49:24,220 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['same_as_context', 'same_as_context', 'same_as_context', 'same_as_context'], count_conv=['same_as_context', 'same_as_context'])
+2026-06-24 14:50:26,481 INFO agent: [ANSWER] Directly learned: Sarah count=3 → convention='same_as_context' (explicit_counts={'Purple': 3})
+2026-06-24 14:50:26,502 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 13 correct builds
+2026-06-24 14:50:26,502 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:50:26,502 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (13 turns, 13 correct, 0 incorrect):
+2026-06-24 14:50:36,971 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:50:36,971 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 1 (from 3 observations, context counts={'Green': 1, 'Red': 3})
+2026-06-24 14:50:48,997 INFO agent: [PROFILE] Feedback: INCORRECT | Sarah now has 1 incorrect builds
+2026-06-24 14:50:48,997 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=False) — learning from target: Green,0,50,0;Green,0,150,0;Red,-100,50,0;Red,-100,150,0;Red,-100,250,0;Yellow,-200,50,0;Yellow,-200,
+2026-06-24 14:50:48,997 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (14 turns, 13 correct, 1 incorrect):
+2026-06-24 14:50:54,701 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:51:08,561 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 14 correct builds
+2026-06-24 14:51:08,561 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (15 turns, 14 correct, 1 incorrect):
+2026-06-24 14:51:12,110 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:51:29,381 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 15 correct builds
+2026-06-24 14:51:29,381 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (16 turns, 15 correct, 1 incorrect):
+2026-06-24 14:52:27,470 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:52:27,470 INFO agent: [GATE] Resolved 'count' via convention='same_as_context' → 3 (from 4 observations, context counts={'Blue': 3})
+2026-06-24 14:52:42,939 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 16 correct builds
+2026-06-24 14:52:42,939 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=True) — learning from target: Purple,0,50,0;Purple,0,150,0;Purple,0,250,0;Purple,0,350,0;Blue,-100,50,0;Blue,-100,150,0;Blue,-100,
+2026-06-24 14:52:42,939 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (17 turns, 16 correct, 1 incorrect):
+2026-06-24 14:52:51,159 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:53:31,081 INFO agent: [PROFILE] Feedback: INCORRECT | Sarah now has 2 incorrect builds
+2026-06-24 14:53:31,081 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (18 turns, 16 correct, 2 incorrect):
+2026-06-24 14:53:44,042 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:53:51,211 INFO agent: [PROFILE] Feedback: CORRECT | Sarah now has 17 correct builds
+2026-06-24 14:53:51,211 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (19 turns, 17 correct, 2 incorrect):
+2026-06-24 14:54:07,129 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:54:45,567 INFO agent: [PROFILE] Feedback: INCORRECT | Sarah now has 3 incorrect builds
+2026-06-24 14:54:45,567 INFO agent: [PROFILE] Updated speaker 'Sarah': Speaker 'Sarah' (20 turns, 17 correct, 3 incorrect):
+2026-06-24 14:54:50,147 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:54:55,753 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 1 correct builds
+2026-06-24 14:54:55,753 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (1 turns, 1 correct, 0 incorrect):
+2026-06-24 14:55:03,641 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:55:12,327 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 2 correct builds
+2026-06-24 14:55:12,327 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (2 turns, 2 correct, 0 incorrect):
+2026-06-24 14:55:23,959 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:55:23,959 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=[], count_conv=[])
+2026-06-24 14:55:35,670 INFO agent: [ANSWER] Directly learned: Sophie color='Red' → convention='different' (explicit_colors={'Blue'})
+2026-06-24 14:55:35,690 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 3 correct builds
+2026-06-24 14:55:35,690 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:55:35,690 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (3 turns, 3 correct, 0 incorrect):
+2026-06-24 14:55:41,919 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 14:55:41,919 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different'], count_conv=[])
+2026-06-24 14:55:57,829 INFO agent: [ANSWER] Directly learned: Sophie color='Red' → convention='same_as_context' (explicit_colors={'Red'})
+2026-06-24 14:55:57,851 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 4 correct builds
+2026-06-24 14:55:57,851 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:55:57,851 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (4 turns, 4 correct, 0 incorrect):
+2026-06-24 14:56:00,519 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:56:23,490 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 5 correct builds
+2026-06-24 14:56:23,490 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (5 turns, 5 correct, 0 incorrect):
+2026-06-24 14:56:29,261 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:56:29,261 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'same_as_context'], count_conv=[])
+2026-06-24 14:56:56,421 INFO agent: [ANSWER] Directly learned: Sophie count=4 → convention='different' (explicit_counts={'Green': 3})
+2026-06-24 14:56:56,441 INFO agent: [PROFILE] Feedback: INCORRECT | Sophie now has 1 incorrect builds
+2026-06-24 14:56:56,441 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:56:56,441 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (6 turns, 5 correct, 1 incorrect):
+2026-06-24 14:57:04,681 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:57:04,681 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'same_as_context'], count_conv=['different'])
+2026-06-24 14:57:32,818 INFO agent: [ANSWER] Directly learned: Sophie count=2 → convention='different' (explicit_counts={'Yellow': 3})
+2026-06-24 14:57:32,838 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 6 correct builds
+2026-06-24 14:57:32,838 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:57:32,838 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (7 turns, 6 correct, 1 incorrect):
+2026-06-24 14:57:39,178 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:58:03,560 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 7 correct builds
+2026-06-24 14:58:03,560 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (8 turns, 7 correct, 1 incorrect):
+2026-06-24 14:58:09,912 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 14:58:09,912 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'same_as_context'], count_conv=['different', 'different'])
+2026-06-24 14:58:37,079 INFO agent: [ANSWER] Directly learned: Sophie count=3 → convention='same_as_context' (explicit_counts={'Red': 3})
+2026-06-24 14:58:37,099 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 8 correct builds
+2026-06-24 14:58:37,099 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 14:58:37,099 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (9 turns, 8 correct, 1 incorrect):
+2026-06-24 14:58:45,369 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 14:59:56,151 INFO agent: [PROFILE] Feedback: INCORRECT | Sophie now has 2 incorrect builds
+2026-06-24 14:59:56,151 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (10 turns, 8 correct, 2 incorrect):
+2026-06-24 15:00:11,132 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 15:00:11,132 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'same_as_context'], count_conv=['different', 'different', 'same_as_context'])
+2026-06-24 15:06:46,689 INFO agent: [ANSWER] Directly learned: Sophie color='Blue' → convention='same_as_context' (explicit_colors={'Blue'})
+2026-06-24 15:06:46,727 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 9 correct builds
+2026-06-24 15:06:46,727 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 15:06:46,727 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (11 turns, 9 correct, 2 incorrect):
+2026-06-24 15:06:49,979 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 15:07:02,460 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 10 correct builds
+2026-06-24 15:07:02,460 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (12 turns, 10 correct, 2 incorrect):
+2026-06-24 15:07:20,823 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 15:07:20,823 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'same_as_context', 'same_as_context'], count_conv=['different', 'different', 'same_as_context'])
+2026-06-24 15:07:35,144 INFO agent: [ANSWER] Directly learned: Sophie count=3 → convention='different' (explicit_counts={'Yellow': 2, 'Green': 2})
+2026-06-24 15:07:35,163 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 11 correct builds
+2026-06-24 15:07:35,163 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 15:07:35,163 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (13 turns, 11 correct, 2 incorrect):
+2026-06-24 15:07:52,222 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 15:08:00,648 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 12 correct builds
+2026-06-24 15:08:00,648 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (14 turns, 12 correct, 2 incorrect):
+2026-06-24 15:08:28,555 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 15:08:43,867 INFO agent: [PROFILE] Feedback: INCORRECT | Sophie now has 3 incorrect builds
+2026-06-24 15:08:43,867 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (15 turns, 12 correct, 3 incorrect):
+2026-06-24 15:08:48,293 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 15:09:22,377 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 13 correct builds
+2026-06-24 15:09:22,377 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (16 turns, 13 correct, 3 incorrect):
+2026-06-24 15:09:28,605 INFO agent: [GATE] Evaluating decision gate for ambiguity='count'
+2026-06-24 15:09:28,605 INFO agent: [GATE] Ambiguity present ('count'), asking for clarification (color_conv=['different', 'same_as_context', 'same_as_context'], count_conv=['different', 'different', 'same_as_context', 'different'])
+2026-06-24 15:14:33,900 INFO agent: [ANSWER] Directly learned: Sophie count=2 → convention='different' (explicit_counts={'Yellow': 3})
+2026-06-24 15:14:33,930 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 14 correct builds
+2026-06-24 15:14:33,930 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 15:14:33,930 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (17 turns, 14 correct, 3 incorrect):
+2026-06-24 15:14:39,181 INFO agent: [GATE] Evaluating decision gate for ambiguity='none'
+2026-06-24 15:14:49,256 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 15 correct builds
+2026-06-24 15:14:49,256 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (18 turns, 15 correct, 3 incorrect):
+2026-06-24 15:14:59,123 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 15:14:59,123 INFO agent: [GATE] Ambiguity present ('color'), asking for clarification (color_conv=['different', 'same_as_context', 'same_as_context'], count_conv=['different', 'different', 'same_as_context', 'different', 'different'])
+2026-06-24 15:15:13,352 INFO agent: [ANSWER] Directly learned: Sophie color='Purple' → convention='same_as_context' (explicit_colors={'Purple'})
+2026-06-24 15:15:13,371 INFO agent: [PROFILE] Feedback: CORRECT | Sophie now has 16 correct builds
+2026-06-24 15:15:13,371 INFO agent: [PROFILE] Turn was an ASK — skipping target extraction to avoid double-counting the convention.
+2026-06-24 15:15:13,371 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (19 turns, 16 correct, 3 incorrect):
+2026-06-24 15:15:17,113 INFO agent: [GATE] Evaluating decision gate for ambiguity='color'
+2026-06-24 15:15:17,113 INFO agent: [GATE] Resolved 'color' via convention='same_as_context' → Yellow (from 4 observations, context colors=['Yellow'])
+2026-06-24 15:15:30,654 INFO agent: [PROFILE] Feedback: INCORRECT | Sophie now has 4 incorrect builds
+2026-06-24 15:15:30,654 INFO agent: [PROFILE] Turn was an INFERENCE (build_correct=False) — learning from target: Yellow,0,50,0;Yellow,-100,50,0;Yellow,-200,50,0;Purple,-200,150,0;Purple,-200,250,0
+2026-06-24 15:15:30,655 INFO agent: [PROFILE] Updated speaker 'Sophie': Speaker 'Sophie' (20 turns, 16 correct, 4 incorrect):

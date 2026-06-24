@@ -196,9 +196,74 @@ class PurplePipeline:
         session.conversation.append({"role": "assistant", "content": build})
         if session.pending:
             session.pending.our_build = build
-            # We asked a question and got an answer. This is no longer an
-            # implicit convention to learn, so we stop tracking it as ambiguous.
-            session.pending.ambiguity_type = "none"
+            # We preserve the ambiguity_type so that when feedback arrives,
+            # we can learn what the speaker intended.
+
+            # ── Direct learning from the answer ──────────────────────────
+            # Store the color/count immediately from the answer text — this
+            # is more reliable than reverse-engineering from the target
+            # structure later (which fails when the answer becomes part of
+            # the explicit_colors set and gets subtracted away).
+            speaker = session.get_or_create_speaker(session.pending.speaker_name)
+            ambiguity = session.pending.ambiguity_type
+
+            explicit_colors_set = {c.capitalize() for c in session.pending.explicit_colors}
+            explicit_counts_vals = set(session.pending.explicit_counts.values())
+
+            if ambiguity == "color":
+                # Look for a known color word in the answer text.
+                known_colors = {
+                    "red", "blue", "green", "yellow", "purple", "orange",
+                    "white", "black", "pink", "brown", "cyan", "magenta",
+                }
+                answer_lower = answer_text.lower()
+                for color_word in known_colors:
+                    if color_word in answer_lower:
+                        capitalized = color_word.capitalize()
+                        # Determine convention: does this match the context?
+                        if capitalized in explicit_colors_set:
+                            convention = SpeakerProfile.SAME_AS_CONTEXT
+                        else:
+                            convention = SpeakerProfile.DIFFERENT
+                        speaker.add_color_convention(convention)
+                        logger.info(
+                            "[ANSWER] Directly learned: %s color='%s' → convention='%s' "
+                            "(explicit_colors=%s)",
+                            speaker.name, capitalized, convention, explicit_colors_set,
+                        )
+                        break
+
+            elif ambiguity == "count":
+                # Look for digits or number words in the answer text.
+                import re as _re
+                word_to_int = {
+                    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+                    "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+                }
+                count_value: Optional[int] = None
+                # Try digit first
+                digit_match = _re.search(r"\b(\d+)\b", answer_text)
+                if digit_match:
+                    count_value = int(digit_match.group(1))
+                else:
+                    # Try word number
+                    for word, val in word_to_int.items():
+                        if word in answer_text.lower():
+                            count_value = val
+                            break
+                if count_value is not None:
+                    # Determine convention: does this count match any explicit count?
+                    if count_value in explicit_counts_vals:
+                        convention = SpeakerProfile.SAME_AS_CONTEXT
+                    else:
+                        convention = SpeakerProfile.DIFFERENT
+                    speaker.add_count_convention(convention)
+                    logger.info(
+                        "[ANSWER] Directly learned: %s count=%d → convention='%s' "
+                        "(explicit_counts=%s)",
+                        speaker.name, count_value, convention, session.pending.explicit_counts,
+                    )
+
         return build
 
     # ----- instruction (main two-stage pipeline) ----------------------
@@ -241,13 +306,59 @@ class PurplePipeline:
         resolution: Optional[str] = None
 
         if ambiguity != "none":
-            logger.info(
-                "[GATE] Ambiguity present ('%s'), asking for clarification",
-                ambiguity
-            )
-            return self._decide_ask(
-                session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts, parsed.start_structure or ""
-            )
+            if ambiguity == "color":
+                convention = speaker.inferred_color_convention()
+                if convention == SpeakerProfile.SAME_AS_CONTEXT and explicit_colors:
+                    unique_colors = list(set([c.capitalize() for c in explicit_colors]))
+                    if len(unique_colors) == 1:
+                        # "same_as_context" → there is only 1 context color, safe to use
+                        context_color = unique_colors[0]
+                        resolution = f"The missing color is {context_color}."
+                        logger.info(
+                            "[GATE] Resolved 'color' via convention='same_as_context' → %s "
+                            "(from %d observations, context colors=%s)",
+                            context_color,
+                            len(speaker.color_conventions),
+                            explicit_colors,
+                        )
+                    else:
+                        logger.info(
+                            "[GATE] Convention is 'same_as_context', but context has multiple conflicting colors %s. "
+                            "Too ambiguous to guess — keeping gate shut.", unique_colors
+                        )
+
+            elif ambiguity == "count":
+                convention = speaker.inferred_count_convention()
+                if convention == SpeakerProfile.SAME_AS_CONTEXT and explicit_counts:
+                    unique_counts = list(set(explicit_counts.values()))
+                    if len(unique_counts) == 1:
+                        # "same_as_context" → there is only 1 context count, safe to use
+                        context_count = unique_counts[0]
+                        resolution = f"The missing count is {context_count}."
+                        logger.info(
+                            "[GATE] Resolved 'count' via convention='same_as_context' → %d "
+                            "(from %d observations, context counts=%s)",
+                            context_count,
+                            len(speaker.count_conventions),
+                            explicit_counts,
+                        )
+                    else:
+                        logger.info(
+                            "[GATE] Convention is 'same_as_context', but context has multiple conflicting counts %s. "
+                            "Too ambiguous to guess — keeping gate shut.", unique_counts
+                        )
+
+            if not resolution:
+                logger.info(
+                    "[GATE] Ambiguity present ('%s'), asking for clarification "
+                    "(color_conv=%s, count_conv=%s)",
+                    ambiguity,
+                    speaker.color_conventions,
+                    speaker.count_conventions,
+                )
+                return self._decide_ask(
+                    session, speaker_name, ambiguity, classification, explicit_colors, explicit_counts, parsed.start_structure or ""
+                )
 
         # Store pending for feedback-driven profile update
         session.pending = PendingClassification(
@@ -350,6 +461,7 @@ class PurplePipeline:
             explicit_colors=explicit_colors,
             explicit_counts=explicit_counts,
             start_structure=start_structure,
+            was_asked=True,
         )
         session.conversation.append({"role": "assistant", "content": ask_response})
 
@@ -656,14 +768,29 @@ class PurplePipeline:
             logger.info("[PROFILE] Feedback: INCORRECT | %s now has %d incorrect builds", 
                        pending.speaker_name, speaker.incorrect_builds)
 
-        # Extract fill values if we had an ambiguity and target is available
-        if (
-            pending.ambiguity_type in ("color", "count")
-            and parsed.target_structure
-        ):
-            logger.info("[PROFILE] Learning from ambiguity='%s' with target: %s", 
-                       pending.ambiguity_type, parsed.target_structure[:100])
-            self._extract_fill_from_target(pending, speaker, parsed.target_structure)
+        # Extract conventions from the absolute ground truth target structure.
+        # We only do this for profile-based inferences (where we didn't ask).
+        # If we asked, we already extracted the convention directly from the
+        # answer text in `_handle_answer`, so we skip here to avoid double-counting.
+        #
+        # CRITICALLY: We do this even if `parsed.is_correct` is False!
+        # If the build failed due to bad coordinates, the target structure
+        # still reveals the speaker's true intended convention.
+        # If the build failed because the speaker changed conventions,
+        # extracting it here will correctly record the inconsistency,
+        # dropping the speaker's confidence so we ask them next time!
+        if pending.ambiguity_type in ("color", "count") and parsed.target_structure:
+            if pending.was_asked:
+                logger.info(
+                    "[PROFILE] Turn was an ASK — skipping target extraction to avoid "
+                    "double-counting the convention."
+                )
+            else:
+                logger.info(
+                    "[PROFILE] Turn was an INFERENCE (build_correct=%s) — learning from target: %s",
+                    parsed.is_correct, parsed.target_structure[:100]
+                )
+                self._extract_fill_from_target(pending, speaker, parsed.target_structure)
 
         logger.info("[PROFILE] Updated speaker '%s': %s", pending.speaker_name, speaker.summary())
         session.pending = None
@@ -675,8 +802,8 @@ class PurplePipeline:
         target_structure: str,
     ) -> None:
         """Compare the target structure against what was explicitly mentioned
-        to determine the actual fill value and record it in the speaker profile."""
-        logger.info("[EXTRACT] Extracting fill from target | speaker: %s | ambiguity: %s", 
+        to determine the convention (same_as_context vs different) and record it."""
+        logger.info("[EXTRACT] Extracting convention from target | speaker: %s | ambiguity: %s",
                    speaker.name, pending.ambiguity_type)
         raw_target_blocks = [b.strip() for b in target_structure.split(";") if b.strip()]
         raw_start_blocks = [b.strip() for b in pending.start_structure.split(";") if b.strip()]
@@ -711,10 +838,28 @@ class PurplePipeline:
             explicit_set = {c.capitalize() for c in pending.explicit_colors}
             fill_colors = {c for c in target_colors if c not in explicit_set}
             logger.info("[EXTRACT] Explicit colors: %s | Fill colors: %s", explicit_set, fill_colors)
-            for fc in fill_colors:
-                speaker.color_fills.append(fc)
+
+            if fill_colors:
+                # Determine convention: do the fill colors match any explicit color?
+                # If all fill colors are in the explicit set → same_as_context
+                # But fill_colors is already defined as NOT in explicit_set,
+                # so if fill_colors is non-empty → different convention.
+                # However, the real "same_as_context" case is when there are NO
+                # fill colors outside the explicit set (meaning the missing blocks
+                # used the same color as explicitly mentioned ones).
+                convention = SpeakerProfile.DIFFERENT
+                speaker.add_color_convention(convention)
                 logger.info(
-                    "[EXTRACT] Learned: %s favors color %s", speaker.name, fc,
+                    "[EXTRACT] Convention: %s (fill colors %s not in explicit %s)",
+                    convention, fill_colors, explicit_set,
+                )
+            else:
+                # All target colors were in the explicit set → same_as_context
+                convention = SpeakerProfile.SAME_AS_CONTEXT
+                speaker.add_color_convention(convention)
+                logger.info(
+                    "[EXTRACT] Convention: %s (all target colors in explicit %s)",
+                    convention, explicit_set,
                 )
 
         elif pending.ambiguity_type == "count":
@@ -724,11 +869,19 @@ class PurplePipeline:
             explicit_count_keys = {
                 k.capitalize() for k in pending.explicit_counts
             }
-            logger.info("[EXTRACT] Target counts: %s | Explicit count keys: %s", target_counts, explicit_count_keys)
+            explicit_count_values = set(pending.explicit_counts.values())
+            logger.info("[EXTRACT] Target counts: %s | Explicit count keys: %s | Explicit count values: %s",
+                       target_counts, explicit_count_keys, explicit_count_values)
+
             for color, count in target_counts.items():
                 if color not in explicit_count_keys:
-                    speaker.count_fills.append(count)
+                    # Determine convention: does this count match any explicit count?
+                    if count in explicit_count_values:
+                        convention = SpeakerProfile.SAME_AS_CONTEXT
+                    else:
+                        convention = SpeakerProfile.DIFFERENT
+                    speaker.add_count_convention(convention)
                     logger.info(
-                        "[profile] %s count_fill += %d (%s)",
-                        speaker.name, count, color,
+                        "[EXTRACT] Convention: %s (count=%d for '%s', explicit_values=%s)",
+                        convention, count, color, explicit_count_values,
                     )

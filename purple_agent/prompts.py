@@ -40,8 +40,7 @@ CRITICAL RULES FOR ASKING:
 2. DO NOT ASK about grid properties (e.g., "how many corners", "how big is the grid").
 3. DO NOT ASK about game rules, scoring, or the benchmark.
 4. DO NOT ASK for repetition if the instruction is clear but complex.
-5. BE CONCISE: Ensure your reasoning and thinking process is brief. You MUST stay within the token limit to ensure the JSON is not truncated.
-6. Keep suggested questions extremely short and focused on ONLY the missing color or count.
+5. Provide context by including a short quote or reference to the specific part of the instruction you are asking about (e.g., "For the 'tower of blocks', what color should they be?"). Keep it extremely focused on the missing detail.
 
 RESPONSE FORMAT — reply with ONLY valid JSON:
 {

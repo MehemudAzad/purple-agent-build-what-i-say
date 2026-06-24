@@ -42,28 +42,100 @@ _INCORRECT_TARGET_RE = re.compile(r"Expected:\s*(.+),\s+but got:")
 
 @dataclass
 class SpeakerProfile:
-    """Convention tracker for one speaker within a game session."""
+    """Convention tracker for one speaker within a game session.
+
+    Tracks *conventions* (relationships), not literal values.
+    Each observation is one of:
+      - "same_as_context"  → the fill matched a color/count already in the instruction
+      - "different"        → the fill was a new color/count not mentioned in the instruction
+
+    A consistent speaker (Speaker A) always produces "same_as_context".
+    An inconsistent speaker (Speaker B) produces a mix → never reaches confidence.
+    """
 
     name: str
-    color_fills: list[str] = field(default_factory=list)
-    count_fills: list[int] = field(default_factory=list)
+    color_conventions: list[str] = field(default_factory=list)   # "same_as_context" | "different"
+    count_conventions: list[str] = field(default_factory=list)   # "same_as_context" | "different"
     turns_seen: int = 0
     correct_builds: int = 0
     incorrect_builds: int = 0
+    
+    # Lockout flags to permanently mark a speaker as inconsistent once their confidence drops below threshold
+    is_unreliable_color: bool = False
+    is_unreliable_count: bool = False
 
     # -- inference ----------------------------------------------------------
+    # Minimum number of observations and minimum confidence ratio required
+    # before we stop asking and start inferring from the profile.
+    _MIN_SAMPLES: int = 3
+    _MIN_CONFIDENCE: float = 0.67  # most-common must be ≥ 67% of observations
 
-    def inferred_color(self) -> Optional[str]:
-        """Most common color used for underspecified slots."""
-        if not self.color_fills:
-            return None
-        return Counter(self.color_fills).most_common(1)[0][0]
+    # Convention constants
+    SAME_AS_CONTEXT = "same_as_context"
+    DIFFERENT = "different"
 
-    def inferred_count(self) -> Optional[int]:
-        """Most common count used for underspecified slots."""
-        if not self.count_fills:
+    def add_color_convention(self, convention: str):
+        if self.is_unreliable_color:
+            return # Locked out, don't even bother tracking anymore
+        self.color_conventions.append(convention)
+        # Check if they should be locked out
+        if len(self.color_conventions) >= self._MIN_SAMPLES:
+            counter = Counter(self.color_conventions)
+            top_count = counter.most_common(1)[0][1]
+            if top_count / len(self.color_conventions) < self._MIN_CONFIDENCE:
+                self.is_unreliable_color = True
+
+    def add_count_convention(self, convention: str):
+        if self.is_unreliable_count:
+            return # Locked out
+        self.count_conventions.append(convention)
+        # Check if they should be locked out
+        if len(self.count_conventions) >= self._MIN_SAMPLES:
+            counter = Counter(self.count_conventions)
+            top_count = counter.most_common(1)[0][1]
+            if top_count / len(self.count_conventions) < self._MIN_CONFIDENCE:
+                self.is_unreliable_count = True
+
+    def inferred_color_convention(self) -> Optional[str]:
+        """Inferred color convention — only if we have enough confident evidence.
+
+        Returns "same_as_context" if the speaker reliably fills with the
+        instruction's context color.  Returns None if data is insufficient
+        or split (meaning we should keep asking).
+        """
+        if self.is_unreliable_color:
             return None
-        return Counter(self.count_fills).most_common(1)[0][0]
+        if len(self.color_conventions) < self._MIN_SAMPLES:
+            return None
+        counter = Counter(self.color_conventions)
+        top_convention, top_count = counter.most_common(1)[0]
+        if top_count / len(self.color_conventions) < self._MIN_CONFIDENCE:
+            # We also set unreliable here just in case, though add_color_convention handles it
+            self.is_unreliable_color = True
+            return None  # too ambiguous — keep asking
+        # Only auto-resolve if the pattern is "same_as_context".
+        if top_convention == self.SAME_AS_CONTEXT:
+            return self.SAME_AS_CONTEXT
+        return None
+
+    def inferred_count_convention(self) -> Optional[str]:
+        """Inferred count convention — only if we have enough confident evidence.
+
+        Returns "same_as_context" if the speaker reliably fills with the
+        instruction's context count.  Returns None otherwise.
+        """
+        if self.is_unreliable_count:
+            return None
+        if len(self.count_conventions) < self._MIN_SAMPLES:
+            return None
+        counter = Counter(self.count_conventions)
+        top_convention, top_count = counter.most_common(1)[0]
+        if top_count / len(self.count_conventions) < self._MIN_CONFIDENCE:
+            self.is_unreliable_count = True
+            return None
+        if top_convention == self.SAME_AS_CONTEXT:
+            return self.SAME_AS_CONTEXT
+        return None
 
     # -- serialisation for prompt injection ---------------------------------
 
@@ -73,17 +145,21 @@ class SpeakerProfile:
             f"({self.turns_seen} turns, {self.correct_builds} correct, "
             f"{self.incorrect_builds} incorrect):"
         ]
-        if self.color_fills:
+        if self.color_conventions:
+            counter = Counter(self.color_conventions)
+            inferred = self.inferred_color_convention()
             lines.append(
-                f"  When color was unspecified, they used: "
-                f"{self.color_fills} → likely '{self.inferred_color()}'"
+                f"  Color convention: {dict(counter)} "
+                f"→ {'PREDICTABLE (same as context)' if inferred else 'UNPREDICTABLE (keep asking)'}"
             )
-        if self.count_fills:
+        if self.count_conventions:
+            counter = Counter(self.count_conventions)
+            inferred = self.inferred_count_convention()
             lines.append(
-                f"  When count was unspecified, they used: "
-                f"{self.count_fills} → likely {self.inferred_count()}"
+                f"  Count convention: {dict(counter)} "
+                f"→ {'PREDICTABLE (same as context)' if inferred else 'UNPREDICTABLE (keep asking)'}"
             )
-        if not self.color_fills and not self.count_fills:
+        if not self.color_conventions and not self.count_conventions:
             lines.append("  No underspecification patterns observed yet.")
         return "\n".join(lines)
 
@@ -104,6 +180,7 @@ class PendingClassification:
     explicit_counts: dict[str, int] = field(default_factory=dict)
     our_build: Optional[str] = None
     start_structure: str = ""
+    was_asked: bool = False
 
 
 # ---------------------------------------------------------------------------
