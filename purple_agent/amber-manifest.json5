@@ -18,7 +18,7 @@
   },
 
   program: {
-    build: { context: "." },
+    image: "ghcr.io/mehemudazad/purple-agent-build-what-i-say:latest",
     entrypoint: "uv run python server.py --host 0.0.0.0 --port 9022",
 
     env: {
