@@ -24,7 +24,7 @@
     env: {
       OPENAI_API_KEY: "${config.openai_api_key}",
       OPENAI_BASE_URL: "${config.openai_base_url}",
-      OPENAI_MODEL: "${config.openai_model}",
+      PURPLE_MODEL: "${config.openai_model}",
     },
 
     network: {
